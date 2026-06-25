@@ -1,3 +1,4 @@
+import FormAltaCliente from "./components/clientes/FormAltaCliente";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
@@ -8,13 +9,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/login" element={<Login />} />
-        
+
         <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/clientes" element={<ListaClientes />} />
+
+        <Route path="/clientes/nuevo" element={<FormAltaCliente />} />
+
         <Route path="/clientes/:id" element={<DetalleCliente />} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
     </BrowserRouter>
   );
