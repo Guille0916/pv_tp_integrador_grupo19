@@ -1,0 +1,42 @@
+/* Fondo con un degradado sutil que cubre toda la pantalla */
+.bg-login-gradient {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    z-index: 9999; /* Se asegura de tapar headers o footers molestos en el login */
+}
+
+/* Tarjeta del Login */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    background-color: #ffffff;
+}
+
+/* Caja redonda para el candado/icono */
+.login-icon-box {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+/* Ajustes finos para los inputs al hacer foco */
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+/* Animación suave de entrada */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
