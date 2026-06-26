@@ -18,6 +18,11 @@ const RutaProtegida = ({ children }) => {
   return children;
 };
 
+const Inicio = () => {
+  const { admin } = useContext(AdminContext);
+  return <Navigate to={admin ? '/dashboard' : '/login'} replace />;
+};
+
 function App() {
   return (
     <AdminProvider>
@@ -27,6 +32,7 @@ function App() {
         <div className="app-main">
           <Routes>
 
+            <Route path="/" element={<Inicio />} />
             <Route path="/login" element={<Login />} />
             
             <Route path="/dashboard" element={<RutaProtegida><Dashboard /></RutaProtegida>} />

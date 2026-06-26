@@ -16,7 +16,7 @@ const Footer = () => {
         <div className="app-footer-social" aria-label="Redes sociales">
           <a href="#" aria-label="Instagram">
             <span>IG</span>
-            Instagram
+            Instagram 
           </a>
           <a href="#" aria-label="Facebook">
             <span>f</span>
