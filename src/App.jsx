@@ -5,8 +5,8 @@ import Dashboard from './views/Dashboard';
 import ListaClientes from './views/ListaClientes';
 import DetalleCliente from './views/DetalleCliente';
 import { AdminContext, AdminProvider } from './context/AdminContext.jsx'
-import {Header} from './components/Header.jsx'
-import Footer from './components/Footer.jsx';
+import {Header} from './components/layout/Header.jsx'
+import Footer from './components/layout/Footer.jsx';
 
 const RutaProtegida = ({ children }) => {
   const { admin } = useContext(AdminContext);
