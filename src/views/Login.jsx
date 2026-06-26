@@ -10,13 +10,13 @@ const Login = () => {
   const navigate = useNavigate();
 
   if (admin) {
-    return <Navigate to="/clientes" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const manejarEnvio = (e) => {
     e.preventDefault();
     login({ nombre: nombre.trim(), sector });
-    navigate('/clientes', { replace: true });
+    navigate('/dashboard', { replace: true });
   };
 
   return (

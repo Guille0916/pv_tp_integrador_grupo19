@@ -8,6 +8,7 @@ const Dashboard = () => {
     contactos: 0,
     fichas: 0,
   });
+  const actividad = [];
 
   useEffect(() => {
     const cargarResumen = async () => {
@@ -34,6 +35,7 @@ const Dashboard = () => {
     };
 
     cargarResumen();
+
   }, []);
 
   return (
@@ -65,6 +67,29 @@ const Dashboard = () => {
             <strong>{metricas.contactos}</strong>
           </div>
         </div>
+      </section>
+
+      <section className="dashboard-activity">
+        <div>
+          <p className="dashboard-kicker">Registro de actividad</p>
+          <h2>Movimientos recientes</h2>
+        </div>
+
+        {actividad.length === 0 ? (
+          <p className="dashboard-empty">
+            El registro se completara cuando se implemente y cargue la lista de clientes desde la API.
+          </p>
+        ) : (
+          <ul>
+            {actividad.map((item) => (
+              <li key={item.id}>
+                <span>{item.fecha}</span>
+                <strong>{item.titulo}</strong>
+                <p>{item.detalle}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );

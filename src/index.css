@@ -287,6 +287,59 @@ a {
   line-height: 1;
 }
 
+.dashboard-activity {
+  margin-top: 20px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgb(15 23 42 / 7%);
+}
+
+.dashboard-activity h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 1.25rem;
+}
+
+.dashboard-empty {
+  margin: 16px 0 0;
+  color: #526174;
+  font-weight: 700;
+}
+
+.dashboard-activity ul {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-activity li {
+  border-left: 4px solid #181d25;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f8fafc;
+}
+
+.dashboard-activity li span {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.dashboard-activity li strong {
+  display: block;
+  margin-top: 3px;
+  color: #172033;
+}
+
+.dashboard-activity li p {
+  margin: 4px 0 0;
+  color: #526174;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
