@@ -23,6 +23,7 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
+
         <Route path="/login" element={<Login />} />
         
         <Route path="/dashboard" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
@@ -30,6 +31,7 @@ function App() {
         <Route path="/clientes/:id" element={<RutaProtegida><DetalleCliente /></RutaProtegida>} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
     </BrowserRouter>
     </AdminProvider>

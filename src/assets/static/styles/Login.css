@@ -1,31 +1,45 @@
-/* Fondo con un degradado sutil que cubre toda la pantalla */
-.bg-login-gradient {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    z-index: 9999; /* Se asegura de tapar headers o footers molestos en el login */
+
+.contenedor-login {
+    background: linear-gradient(135deg, #16abc2 0%, #0f4c5c 100%) ;
+    z-index: 9999; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0%;
+    width:100;
+    left: 0;       
+    width: 100%;   
+    height: 100vh;
 }
 
-/* Tarjeta del Login */
-.login-card {
+
+.card-login{
     width: 100%;
     max-width: 420px;
-    border-radius: 16px;
-    background-color: #ffffff;
+    border-radius: 24px;
+   background-color: rgba(255, 255, 255, 0.307);
+   backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Caja redonda para el candado/icono */
+
 .login-icon-box {
-    width: 65px;
-    height: 65px;
+    width: 70px;  
+    height: 70px; 
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15) ;
+    border: 1px solid rgba(255, 255, 255, 0.25) ;
+    margin-bottom: 45px ;
 }
 
-/* Ajustes finos para los inputs al hacer foco */
+
 .form-control:focus, .form-select:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
 }
 
-/* Animación suave de entrada */
+
 .animate-fade-in {
     animation: fadeIn 0.4s ease-out forwards;
 }
@@ -40,3 +54,7 @@
         transform: translateY(0);
     }
 }
+
+
+
+ 

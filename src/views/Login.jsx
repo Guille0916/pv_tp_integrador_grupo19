@@ -61,7 +61,7 @@ const Login = () => {
             </div>
 
             <button type="submit" className="btn btn-primary btn-lg w-100 fw-semibold shadow-sm py-2 fs-6">
-              Ingresar al Sistema
+              Ingresar 
             </button>
           </form>
         </div>
