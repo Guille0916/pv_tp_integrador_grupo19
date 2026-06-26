@@ -55,6 +55,7 @@ const Login = () => {
                 required
               >
                 <option value="" disabled>Selecciona tu sector...</option>
+                <option value="Administrador">Administrador</option>
                 <option value="Gerencia">Gerencia</option>
                 <option value="Soporte">Soporte</option>
               </select>
