@@ -1,54 +1,60 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { AdminContext } from '../context/AdminContext.jsx';
 import '../assets/static/styles/Login.css';
 
 const Login = () => {
   const [nombre, setNombre] = useState('');
   const [sector, setSector] = useState('');
+  const { admin, login } = useContext(AdminContext);
+  const navigate = useNavigate();
+
+  if (admin) {
+    return <Navigate to="/clientes" replace />;
+  }
 
   const manejarEnvio = (e) => {
     e.preventDefault();
-    console.log('Datos enviados:', { nombre, sector });
-    
-    alert(`¡Bienvenido ${nombre} del sector ${sector}!`);
+    login({ nombre: nombre.trim(), sector });
+    navigate('/clientes', { replace: true });
   };
 
   return (
-    <div className="contenedor-login">
-      <div className="card card-login border-0 shadow-lg" >
-        <div className="card-body bg-transparent p-5">
-          <h3 className="mt-3 text-center mb-4">  Panel  de Control</h3>
+    <div className="bg-login-gradient d-flex align-items-center justify-content-center vh-100 w-100 position-fixed top-0 start-0">
+      <div className="card login-card shadow-lg border-0 animate-fade-in">
+        <div className="card-body p-5">
           <div className="text-center mb-4">
-            <div className="login-icon-box mx-auto d-flex align-items-center justify-content-center">
-              <img src="https://img.icons8.com/?size=100&id=OAHfGI3jkWNU&format=png&color=000000" alt= "icn-login"/>
+            <div className="login-icon-box bg-primary text-white mx-auto shadow d-flex align-items-center justify-content-center">
+              <span className="fs-3" aria-hidden="true">ID</span>
             </div>
-            <p className="text-inicio fw-bold mb-4">Iniciar sesion</p>
+            <h2 className="fw-bold mt-3 mb-1 text-dark fs-3">Panel de Control</h2>
+            <p className="text-muted small">Ingresa tus credenciales de administrador</p>
           </div>
 
           <form onSubmit={manejarEnvio}>
-            
             <div className="mb-3 text-start">
-              <label htmlFor="nombre" className="form-label small fw-bold text-secondary"> Usuario</label>
-              <input 
-                type="text" 
-                id="nombre" 
-                className="form-control form-control-lg fs-6" 
-                placeholder="Ej: Guillermo" 
+              <label htmlFor="nombre" className="form-label small fw-bold text-secondary">Nombre de Usuario</label>
+              <input
+                type="text"
+                id="nombre"
+                className="form-control form-control-lg fs-6"
+                placeholder="Ej: Guillermo"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                required 
+                required
               />
             </div>
 
             <div className="mb-4 text-start">
-              <label htmlFor="sector" className="form-label small fw-bold text-secondary">Sector</label>
-              <select 
-                id="sector" 
-                className="form-select form-control-lg fs-6" 
+              <label htmlFor="sector" className="form-label small fw-bold text-secondary">Sector / Rol</label>
+              <select
+                id="sector"
+                className="form-select form-control-lg fs-6"
                 value={sector}
                 onChange={(e) => setSector(e.target.value)}
                 required
               >
-                <option value="" disabled> Seleciona sector...</option>
+                <option value="" disabled>Selecciona tu sector...</option>
                 <option value="Gerencia">Gerencia</option>
                 <option value="Soporte">Soporte</option>
               </select>
@@ -58,7 +64,6 @@ const Login = () => {
               Ingresar 
             </button>
           </form>
-
         </div>
       </div>
     </div>
