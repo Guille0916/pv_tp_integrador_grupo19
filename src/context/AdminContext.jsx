@@ -1,35 +1,46 @@
-import {createContext, useState, useEffect }from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-//hola aqui dejo los comentario para estudiar = aqui es cuando se  crea el contexto 
+const STORAGE_KEY = 'adminSesion';
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const AdminContext = createContext();
 
-//AQUI creando el provedor de contexto (provider)
-export const AdminProvider = ({children}) => {
+export const AdminProvider = ({ children }) => {
+  const [admin, setAdmin] = useState(() => {
+    const savedAdmin =
+      localStorage.getItem(STORAGE_KEY) ||
+      localStorage.getItem('adminSeccion') ||
+      localStorage.getItem('admin');
 
-    //el estado global del administrador.
-    const [admin, setAdmin] = useState(()=>{
-        //aqui se obtiene el administrador del localStorage
-        const saveAdmin = localStorage.getItem('admin');
+    try {
+      return savedAdmin ? JSON.parse(savedAdmin) : null;
+    } catch {
+      return null;
+    }
+  });
 
-        //aqui se retorna el administrador si existe, si no retorna null
-        return saveAdmin ? JSON.parse(saveAdmin) : null;
-    });
-    
-//funcion global guardar la sesion al precionar el boton ingresar
-const  login = (adminData) => {
-    setAdmin(adminData);
-    localStorage.setItem('adminSeccion', JSON.stringify(adminData));
-};
+  useEffect(() => {
+    if (admin) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(admin));
+      return;
+    }
 
-//funcion global para borrar la seccion al "cerrar seccion"
-const logout = () => {
-    setAdmin(null);
+    localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('adminSeccion');
-}
+    localStorage.removeItem('admin');
+  }, [admin]);
 
-    return (
-        <AdminContext.Provider value={{ admin, login, logout }}>
-            {children}
-        </AdminContext.Provider>
-    );
+  const login = (adminData) => {
+    setAdmin(adminData);
+  };
+
+  const logout = () => {
+    setAdmin(null);
+  };
+
+  return (
+    <AdminContext.Provider value={{ admin, login, logout }}>
+      {children}
+    </AdminContext.Provider>
+  );
 };
