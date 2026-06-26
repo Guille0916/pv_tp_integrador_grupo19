@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { AdminContext } from '../context/AdminContext.jsx';
 
+const ACTIVIDAD_KEY = 'registroActividadClientes';
+
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
   const [metricas, setMetricas] = useState({
@@ -8,6 +10,7 @@ const Dashboard = () => {
     contactos: 0,
     fichas: 0,
   });
+  const [actividad] = useState(() => JSON.parse(localStorage.getItem(ACTIVIDAD_KEY) || '[]'));
 
   useEffect(() => {
     const cargarResumen = async () => {
@@ -34,6 +37,7 @@ const Dashboard = () => {
     };
 
     cargarResumen();
+
   }, []);
 
   return (
@@ -65,6 +69,29 @@ const Dashboard = () => {
             <strong>{metricas.contactos}</strong>
           </div>
         </div>
+      </section>
+
+      <section className="dashboard-activity">
+        <div>
+          <p className="dashboard-kicker">Registro de actividad</p>
+          <h2>Movimientos recientes</h2>
+        </div>
+
+        {actividad.length === 0 ? (
+          <p className="dashboard-empty">
+            El registro se completara cuando se cargue la lista de clientes.
+          </p>
+        ) : (
+          <ul>
+            {actividad.map((item) => (
+              <li key={item.id}>
+                <span>{item.fecha}</span>
+                <strong>{item.titulo}</strong>
+                <p>{item.detalle}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
