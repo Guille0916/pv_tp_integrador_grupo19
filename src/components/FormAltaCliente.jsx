@@ -83,7 +83,7 @@ const FormAltaCliente = () => {
       }
 
 
-    } catch(error){
+    } catch {
 
       setMensaje("Error de conexión");
 

@@ -5,7 +5,8 @@ import Dashboard from './views/Dashboard';
 import ListaClientes from './views/ListaClientes';
 import DetalleCliente from './views/DetalleCliente';
 import { AdminContext, AdminProvider } from './context/AdminContext.jsx'
-import {Header} from './components/layout/Header.jsx'
+import {Header} from './components/Header.jsx'
+import Footer from './components/Footer.jsx';
 
 const RutaProtegida = ({ children }) => {
   const { admin } = useContext(AdminContext);
@@ -21,18 +22,23 @@ function App() {
   return (
     <AdminProvider>
     <BrowserRouter>
-      <Header />
-      <Routes>
+      <div className="app-layout">
+        <Header />
+        <div className="app-main">
+          <Routes>
 
-        <Route path="/login" element={<Login />} />
-        
-        <Route path="/dashboard" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
-        <Route path="/clientes" element={<RutaProtegida><ListaClientes /></RutaProtegida>} />
-        <Route path="/clientes/:id" element={<RutaProtegida><DetalleCliente /></RutaProtegida>} />
+            <Route path="/login" element={<Login />} />
+            
+            <Route path="/dashboard" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
+            <Route path="/clientes" element={<RutaProtegida><ListaClientes /></RutaProtegida>} />
+            <Route path="/clientes/:id" element={<RutaProtegida><DetalleCliente /></RutaProtegida>} />
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
 
-      </Routes>
+          </Routes>
+        </div>
+        <Footer />
+      </div>
     </BrowserRouter>
     </AdminProvider>
   );

@@ -13,7 +13,7 @@ const DetalleCliente = () => {
   const [eliminando, setEliminando] = useState(false);
   const [mensajeDelete, setMensajeDelete] = useState('');
 
-  const puedeEliminar = admin?.sector === 'Gerencia';
+  const puedeEliminar = ['Administrador', 'Gerencia'].includes(admin?.sector);
 
   useEffect(() => {
     const controller = new AbortController();
