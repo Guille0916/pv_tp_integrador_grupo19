@@ -1,70 +1,80 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AdminContext } from '../context/AdminContext.jsx';
+
+const ACTIVIDAD_KEY = 'registroActividadClientes';
+const RESUMEN_KEY = 'resumenClientesDashboard';
 
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
-  const [metricas, setMetricas] = useState({
+  const [metricas] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(RESUMEN_KEY) || '{"clientes":0,"contactos":0,"fichas":0}');
+    } catch {
+      return {
+        clientes: 0,
+        contactos: 0,
+        fichas: 0,
+      };
+    }
+  });
+  const [actividad] = useState(() => {
+    try {
+      const historial = JSON.parse(localStorage.getItem(ACTIVIDAD_KEY) || '[]');
+
+      if (historial.length > 0) {
+        return historial;
+      }
+
+      const resumen = JSON.parse(localStorage.getItem(RESUMEN_KEY) || '{"clientes":0}');
+
+      if (resumen.clientes > 0) {
+        return [{
+          id: 'resumen-clientes',
+          fecha: 'Actividad reciente',
+          titulo: 'Lista de clientes cargada',
+          detalle: `Se consultaron ${resumen.clientes} clientes.`,
+        }];
+      }
+
+      return [];
+    } catch {
+      return [];
+    }
+  });
+
+  const metricasSeguras = {
     clientes: 0,
     contactos: 0,
     fichas: 0,
-  });
-  const actividad = [];
-
-  useEffect(() => {
-    const cargarResumen = async () => {
-      try {
-        const respuesta = await fetch('https://fakestoreapi.com/users');
-
-        if (!respuesta.ok) {
-          throw new Error('Error al consultar FakeStore API');
-        }
-
-        const data = await respuesta.json();
-        setMetricas({
-          clientes: data.length,
-          contactos: data.filter((cliente) => cliente.email && cliente.phone).length,
-          fichas: data.filter((cliente) => cliente.username && cliente.password).length,
-        });
-      } catch {
-        setMetricas({
-          clientes: 0,
-          contactos: 0,
-          fichas: 0,
-        });
-      }
-    };
-
-    cargarResumen();
-
-  }, []);
+    ...metricas,
+  };
 
   return (
     <main className="dashboard-page">
       <section className="dashboard-welcome">
-        <div>
-          <p className="dashboard-kicker">Panel de Control de Clientes</p>
-          <h1>Bienvenido, {admin?.nombre}</h1>
+        <div className="dashboard-welcome-copy">
+          <h1>
+            <span aria-hidden="true">{'\uD83D\uDC4B'}</span>
+            Bienvenido, <span className="dashboard-user-name">{admin?.nombre}</span>
+          </h1>
           <p className="dashboard-intro">
-            Tenes acceso como {admin?.sector}. Este es el resumen principal del sistema.
+            Tenes acceso al sistema de gestion de clientes.
           </p>
+          <span className="dashboard-role-pill">Rol: {admin?.sector}</span>
         </div>
 
         <div className="dashboard-summary">
           <div>
-            <span>Administrador</span>
-            <strong>{admin?.sector}</strong>
-          </div>
-          <div>
             <span>Clientes</span>
-            <strong>{metricas.clientes}</strong>
-          </div>
-          <div>
-            <span>Fichas completas</span>
-            <strong>{metricas.fichas}</strong>
+            <strong>{metricasSeguras.clientes}</strong>
           </div>
           <div>
             <span>Contactos</span>
-            <strong>{metricas.contactos}</strong>
+            <strong>{metricasSeguras.contactos}</strong>
+          </div>
+          <div>
+            <span>Fichas completas</span>
+            <strong>{metricasSeguras.fichas}</strong>
           </div>
         </div>
       </section>
@@ -77,7 +87,7 @@ const Dashboard = () => {
 
         {actividad.length === 0 ? (
           <p className="dashboard-empty">
-            El registro se completara cuando se implemente y cargue la lista de clientes desde la API.
+            El registro se completara cuando se cargue la lista de clientes desde la API.
           </p>
         ) : (
           <ul>

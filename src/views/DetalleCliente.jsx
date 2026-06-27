@@ -3,6 +3,16 @@ import { Link, useParams } from 'react-router-dom';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
+const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
+
+const obtenerClienteLocal = (id) => {
+  try {
+    const clientesLocales = JSON.parse(localStorage.getItem(CLIENTES_LOCALES_KEY) || '[]');
+    return clientesLocales.find((cliente) => String(cliente.id) === String(id));
+  } catch {
+    return null;
+  }
+};
 
 const DetalleCliente = () => {
   const { id } = useParams();
@@ -10,10 +20,6 @@ const DetalleCliente = () => {
   const [cliente, setCliente] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-  const [eliminando, setEliminando] = useState(false);
-  const [mensajeDelete, setMensajeDelete] = useState('');
-
-  const puedeEliminar = ['Administrador', 'Gerencia'].includes(admin?.sector);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -21,9 +27,16 @@ const DetalleCliente = () => {
     const obtenerCliente = async () => {
       setCargando(true);
       setError('');
-      setMensajeDelete('');
 
       try {
+        const clienteLocal = obtenerClienteLocal(id);
+
+        if (clienteLocal) {
+          setCliente(clienteLocal);
+          setCargando(false);
+          return;
+        }
+
         const respuesta = await fetch(`${API_URL}/${id}`, {
           signal: controller.signal,
         });
@@ -49,29 +62,6 @@ const DetalleCliente = () => {
 
     return () => controller.abort();
   }, [id]);
-
-  const eliminarCliente = async () => {
-    setEliminando(true);
-    setMensajeDelete('');
-    setError('');
-
-    try {
-      const respuesta = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!respuesta.ok) {
-        throw new Error('No se pudo simular la eliminacion del cliente.');
-      }
-
-      const data = await respuesta.json();
-      setMensajeDelete(`Cliente ID ${data.id ?? id} eliminado correctamente en la simulacion.`);
-    } catch (err) {
-      setError(err.message || 'Ocurrio un error al eliminar el cliente.');
-    } finally {
-      setEliminando(false);
-    }
-  };
 
   if (cargando) {
     return (
@@ -110,44 +100,38 @@ const DetalleCliente = () => {
     username,
   } = cliente;
 
-  const nombreCompleto = `${name.firstname ?? ''} ${name.lastname ?? ''}`.trim() || 'Cliente sin nombre';
+  const nombreCompleto = `${name.firstname ?? ''} ${name.lastname ?? ''}`.trim() || 'Cliente';
+  const iniciales = `${name.firstname?.[0] ?? ''}${name.lastname?.[0] ?? ''}`.toUpperCase() || 'CL';
 
   return (
     <main className="detalle-page">
       <section className="detalle-shell">
         <div className="detalle-topbar">
           <Link className="detalle-back" to="/clientes">Volver a clientes</Link>
-          <span className={`detalle-role ${puedeEliminar ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
+          <span className={`detalle-role ${admin?.sector === 'Gerencia' ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
             {admin?.sector ?? 'Sin sector'}
           </span>
         </div>
 
         <header className="detalle-header">
-          <div>
-            <p className="detalle-kicker">Ficha profunda del cliente</p>
-            <h1>{nombreCompleto}</h1>
-            <p>ID #{cliente.id} - {email}</p>
+          <div className="detalle-persona">
+            <div className="detalle-avatar" aria-hidden="true">{iniciales}</div>
+            <div>
+              <p className="detalle-kicker">Ficha completa</p>
+              <h1>{nombreCompleto}</h1>
+              <div className="detalle-meta">
+                <span>ID #{cliente.id}</span>
+                <span>{email}</span>
+                <span>{phone}</span>
+              </div>
+            </div>
           </div>
-          {puedeEliminar && (
-            <button
-              className="detalle-delete"
-              disabled={eliminando}
-              onClick={eliminarCliente}
-              type="button"
-            >
-              {eliminando ? 'Eliminando...' : 'Eliminar Cliente'}
-            </button>
-          )}
         </header>
 
         {admin?.sector === 'Soporte' && (
           <div className="detalle-alert detalle-alert-info">
             Perfil Soporte: acceso de solo lectura a la ficha del cliente.
           </div>
-        )}
-
-        {mensajeDelete && (
-          <div className="detalle-alert detalle-alert-success">{mensajeDelete}</div>
         )}
 
         {error && (

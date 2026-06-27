@@ -17,9 +17,10 @@ export const Header = () => {
   return (
     <header className="app-header">
       <div className="app-header-inner">
-        <div className="app-brand">
+        <NavLink className="app-brand" to="/dashboard" aria-label="Ir al dashboard">
           <img className="app-brand-logo" src={logoEducacion} alt="Logo educacion" />
-        </div>
+          <strong>Gestion de clientes</strong>
+        </NavLink>
 
         <nav className="app-nav" aria-label="Navegacion principal">
           <NavLink to="/dashboard">Dashboard</NavLink>
