@@ -166,6 +166,10 @@ const FormAltaCliente = ({ onClienteCreado }) => {
         setMensaje(`Se registro ${nombreCompleto} correctamente.`);
         setErrores({});
         setFormData(estadoInicial);
+        setTimeout(() => {
+        setMensaje("");
+        setTipoMensaje("");
+      }, 3000);
       }
       else{
         setTipoMensaje("danger");
@@ -332,26 +336,29 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
             <Row>
 
-              <Col md={6}>
+                <Col md={6}>
+  <Form.Group className="mb-3">
+    <Form.Label>Ciudad</Form.Label>
+    <Form.Select
+      isInvalid={Boolean(errores.city)}
+      name="city"
+      onChange={handleChange}
+      required
+      value={formData.city}
+    >
+      <option value="" disabled>Selecciona tu ciudad...</option>
+      <option value="San Salvador de Jujuy">San Salvador de Jujuy</option>
+      <option value="Palpalá">Palpalá</option>
+      <option value="El Carmen">El Carmen</option>
+      <option value="San Pedro de Jujuy">San Pedro de Jujuy</option>
+      <option value="Libertador General San Martín">Libertador General San Martín</option>
+      <option value="La Quiaca">La Quiaca</option>
+    </Form.Select>
+    <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
+  </Form.Group>
+</Col>
 
-                <Form.Group className="mb-3">
-
-                  <Form.Label>
-                    Ciudad
-                  </Form.Label>
-
-                  <Form.Control
-                    isInvalid={Boolean(errores.city)}
-                    name="city"
-                    onChange={handleChange}
-                    required
-                    value={formData.city}
-                  />
-                  <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
-
-                </Form.Group>
-
-              </Col>
+              
 
 
               <Col md={6}>

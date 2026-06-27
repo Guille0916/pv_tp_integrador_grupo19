@@ -1,11 +1,13 @@
 import { useContext, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { AdminContext } from '../context/AdminContext.jsx';
+import { Alert } from 'react-bootstrap'; 
 import '../assets/static/styles/Login.css';
 
 const Login = () => {
   const [nombre, setNombre] = useState('');
   const [sector, setSector] = useState('');
+  const [errorValidacion, setErrorValidacion] = useState(''); 
   const { admin, login } = useContext(AdminContext);
   const navigate = useNavigate();
 
@@ -15,6 +17,21 @@ const Login = () => {
 
   const manejarEnvio = (e) => {
     e.preventDefault();
+    setErrorValidacion(''); 
+
+    
+    if (nombre.trim() === '') {
+      setErrorValidacion('El nombre de usuario no puede contener solo espacios en blanco.');
+      return; 
+    }
+
+    
+    if (sector === '') {
+      setErrorValidacion('Por favor, selecciona un sector válido.');
+      return; 
+    }
+
+    
     login({ nombre: nombre.trim(), sector });
     navigate('/dashboard', { replace: true });
   };
@@ -28,8 +45,15 @@ const Login = () => {
               <span className="fs-3" aria-hidden="true">ID</span>
             </div>
             <h2 className="fw-bold mt-3 mb-1 text-dark fs-3">Panel de Control</h2>
-            <p className="text-muted small">Iniciar sesion</p>
+            <p className="text-muted small">Iniciar sesión</p>
           </div>
+
+          
+          {errorValidacion && (
+            <Alert variant="danger" className="py-2 small text-center mb-3">
+              {errorValidacion}
+            </Alert>
+          )}
 
           <form onSubmit={manejarEnvio}>
             <div className="mb-3 text-start">
