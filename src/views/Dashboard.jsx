@@ -60,7 +60,7 @@ const Dashboard = () => {
           <p className="dashboard-intro">
             Tenes acceso al sistema de gestion de clientes.
           </p>
-          <span className="dashboard-role-pill">Rol: {admin?.sector}</span>
+          <span className="dashboard-role-pill">Sector: {admin?.sector}</span>
         </div>
 
         <div className="dashboard-summary">

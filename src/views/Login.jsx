@@ -28,7 +28,7 @@ const Login = () => {
               <span className="fs-3" aria-hidden="true">ID</span>
             </div>
             <h2 className="fw-bold mt-3 mb-1 text-dark fs-3">Panel de Control</h2>
-            <p className="text-muted small">Ingresa tus credenciales de administrador</p>
+            <p className="text-muted small">Iniciar sesion</p>
           </div>
 
           <form onSubmit={manejarEnvio}>
@@ -46,7 +46,7 @@ const Login = () => {
             </div>
 
             <div className="mb-4 text-start">
-              <label htmlFor="sector" className="form-label small fw-bold text-secondary">Sector / Rol</label>
+              <label htmlFor="sector" className="form-label small fw-bold text-secondary">Sector</label>
               <select
                 id="sector"
                 className="form-select form-control-lg fs-6"
@@ -55,7 +55,6 @@ const Login = () => {
                 required
               >
                 <option value="" disabled>Selecciona tu sector...</option>
-                <option value="Administrador">Administrador</option>
                 <option value="Gerencia">Gerencia</option>
                 <option value="Soporte">Soporte</option>
               </select>
