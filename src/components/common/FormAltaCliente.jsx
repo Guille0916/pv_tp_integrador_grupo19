@@ -1,24 +1,48 @@
 import { useState } from "react";
 import { Form, Button, Container, Row, Col, Alert, Card } from "react-bootstrap";
 
-const FormAltaCliente = () => {
+const estadoInicial = {
+  firstname: "",
+  lastname: "",
+  email: "",
+  username: "",
+  password: "",
+  city: "",
+  street: "",
+  number: "",
+  zipcode: "",
+  lat: "",
+  long: "",
+  phone: "",
+};
 
-  const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "",
-    password: "",
-    city: "",
-    street: "",
-    number: "",
-    zipcode: "",
-    lat: "",
-    long: "",
-    phone: "",
-  });
+const camposObligatorios = [
+  "firstname",
+  "lastname",
+  "email",
+  "username",
+  "password",
+  "city",
+  "street",
+  "number",
+  "zipcode",
+  "lat",
+  "long",
+  "phone",
+];
+
+const normalizarFormulario = (formData) => Object.fromEntries(
+  Object.entries(formData).map(([key, value]) => [key, value.trim()])
+);
+
+const FormAltaCliente = ({ onClienteCreado }) => {
+
+  const [formData, setFormData] = useState(estadoInicial);
 
   const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState("success");
+  const [enviando, setEnviando] = useState(false);
+  const [errores, setErrores] = useState({});
 
 
   const handleChange = (e) => {
@@ -26,35 +50,87 @@ const FormAltaCliente = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setErrores({
+      ...errores,
+      [e.target.name]: "",
+    });
+  };
+
+  const validarFormulario = (datos) => {
+    const nuevosErrores = {};
+
+    camposObligatorios.forEach((campo) => {
+      if (!datos[campo]) {
+        nuevosErrores[campo] = "Este campo es obligatorio.";
+      }
+    });
+
+    if (datos.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) {
+      nuevosErrores.email = "Ingresa un email valido.";
+    }
+
+    if (datos.password && datos.password.length < 4) {
+      nuevosErrores.password = "La contrasena debe tener al menos 4 caracteres.";
+    }
+
+    if (datos.number && (Number.isNaN(Number(datos.number)) || Number(datos.number) <= 0)) {
+      nuevosErrores.number = "Ingresa un numero valido.";
+    }
+
+    if (datos.lat && Number.isNaN(Number(datos.lat))) {
+      nuevosErrores.lat = "Ingresa una latitud valida.";
+    }
+
+    if (datos.long && Number.isNaN(Number(datos.long))) {
+      nuevosErrores.long = "Ingresa una longitud valida.";
+    }
+
+    if (datos.phone && datos.phone.length < 6) {
+      nuevosErrores.phone = "Ingresa un telefono valido.";
+    }
+
+    return nuevosErrores;
   };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMensaje("");
+    const datos = normalizarFormulario(formData);
+    const erroresFormulario = validarFormulario(datos);
+
+    if (Object.keys(erroresFormulario).length > 0) {
+      setErrores(erroresFormulario);
+      setTipoMensaje("danger");
+      setMensaje("Completa todos los datos correctamente antes de agregar el cliente.");
+      return;
+    }
+
+    setEnviando(true);
 
     const nuevoCliente = {
-      email: formData.email,
-      username: formData.username,
-      password: formData.password,
+      email: datos.email,
+      username: datos.username,
+      password: datos.password,
 
       name: {
-        firstname: formData.firstname,
-        lastname: formData.lastname,
+        firstname: datos.firstname,
+        lastname: datos.lastname,
       },
 
       address: {
-        city: formData.city,
-        street: formData.street,
-        number: Number(formData.number),
-        zipcode: formData.zipcode,
+        city: datos.city,
+        street: datos.street,
+        number: Number(datos.number),
+        zipcode: datos.zipcode,
 
         geolocation: {
-          lat: formData.lat,
-          long: formData.long,
+          lat: datos.lat,
+          long: datos.long,
         },
       },
 
-      phone: formData.phone,
+      phone: datos.phone,
     };
 
 
@@ -76,17 +152,34 @@ const FormAltaCliente = () => {
 
 
       if(response.ok){
-        setMensaje(`Cliente creado correctamente. ID: ${data.id}`);
+        const clienteCreado = {
+          ...nuevoCliente,
+          id: `local-${Date.now()}`,
+          apiId: data.id ?? null,
+          creadoLocalmente: true,
+        };
+
+        const nombreCompleto = `${clienteCreado.name.firstname} ${clienteCreado.name.lastname}`;
+
+        onClienteCreado?.(clienteCreado);
+        setTipoMensaje("success");
+        setMensaje(`Se registro ${nombreCompleto} correctamente.`);
+        setErrores({});
+        setFormData(estadoInicial);
       }
       else{
+        setTipoMensaje("danger");
         setMensaje("No se pudo crear el cliente");
       }
 
 
     } catch {
 
-      setMensaje("Error de conexión");
+      setTipoMensaje("danger");
+      setMensaje("Error de conexion");
 
+    } finally {
+      setEnviando(false);
     }
 
   };
@@ -94,26 +187,26 @@ const FormAltaCliente = () => {
 
   return (
 
-    <Container className="mt-4">
+    <Container className="registro-form-container mt-4">
 
 
-      <Card>
+      <Card className="registro-form-card">
 
         <Card.Body>
 
           <Card.Title>
-            Alta de Cliente
+            Registrar cliente
           </Card.Title>
 
 
           {mensaje && 
-            <Alert variant="success">
+            <Alert variant={tipoMensaje}>
               {mensaje}
             </Alert>
           }
 
 
-          <Form onSubmit={handleSubmit}>
+          <Form noValidate onSubmit={handleSubmit}>
 
 
             <Row>
@@ -127,9 +220,13 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
+                    isInvalid={Boolean(errores.firstname)}
                     name="firstname"
                     onChange={handleChange}
+                    required
+                    value={formData.firstname}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.firstname}</Form.Control.Feedback>
 
                 </Form.Group>
               </Col>
@@ -144,9 +241,13 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
+                    isInvalid={Boolean(errores.lastname)}
                     name="lastname"
                     onChange={handleChange}
+                    required
+                    value={formData.lastname}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.lastname}</Form.Control.Feedback>
 
                 </Form.Group>
               </Col>
@@ -168,10 +269,14 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
-                    type="email"
+                    isInvalid={Boolean(errores.email)}
                     name="email"
                     onChange={handleChange}
+                    required
+                    type="email"
+                    value={formData.email}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.email}</Form.Control.Feedback>
 
                 </Form.Group>
 
@@ -188,9 +293,13 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
+                    isInvalid={Boolean(errores.username)}
                     name="username"
                     onChange={handleChange}
+                    required
+                    value={formData.username}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.username}</Form.Control.Feedback>
 
                 </Form.Group>
 
@@ -207,10 +316,14 @@ const FormAltaCliente = () => {
               </Form.Label>
 
               <Form.Control
-                type="password"
+                isInvalid={Boolean(errores.password)}
                 name="password"
                 onChange={handleChange}
+                required
+                type="password"
+                value={formData.password}
               />
+              <Form.Control.Feedback type="invalid">{errores.password}</Form.Control.Feedback>
 
             </Form.Group>
 
@@ -228,9 +341,13 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
+                    isInvalid={Boolean(errores.city)}
                     name="city"
                     onChange={handleChange}
+                    required
+                    value={formData.city}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
 
                 </Form.Group>
 
@@ -246,9 +363,13 @@ const FormAltaCliente = () => {
                   </Form.Label>
 
                   <Form.Control
+                    isInvalid={Boolean(errores.street)}
                     name="street"
                     onChange={handleChange}
+                    required
+                    value={formData.street}
                   />
+                  <Form.Control.Feedback type="invalid">{errores.street}</Form.Control.Feedback>
 
                 </Form.Group>
 
@@ -266,10 +387,15 @@ const FormAltaCliente = () => {
 
                 <Form.Control
                   className="mb-3"
-                  placeholder="Número"
+                  isInvalid={Boolean(errores.number)}
                   name="number"
                   onChange={handleChange}
+                  placeholder="Numero"
+                  required
+                  type="number"
+                  value={formData.number}
                 />
+                <Form.Control.Feedback type="invalid">{errores.number}</Form.Control.Feedback>
 
               </Col>
 
@@ -278,10 +404,14 @@ const FormAltaCliente = () => {
 
                 <Form.Control
                   className="mb-3"
-                  placeholder="Código Postal"
+                  isInvalid={Boolean(errores.zipcode)}
                   name="zipcode"
                   onChange={handleChange}
+                  placeholder="Codigo postal"
+                  required
+                  value={formData.zipcode}
                 />
+                <Form.Control.Feedback type="invalid">{errores.zipcode}</Form.Control.Feedback>
 
               </Col>
 
@@ -290,10 +420,14 @@ const FormAltaCliente = () => {
 
                 <Form.Control
                   className="mb-3"
-                  placeholder="Teléfono"
+                  isInvalid={Boolean(errores.phone)}
                   name="phone"
                   onChange={handleChange}
+                  placeholder="Telefono"
+                  required
+                  value={formData.phone}
                 />
+                <Form.Control.Feedback type="invalid">{errores.phone}</Form.Control.Feedback>
 
               </Col>
 
@@ -309,10 +443,15 @@ const FormAltaCliente = () => {
 
                 <Form.Control
                   className="mb-3"
-                  placeholder="Latitud"
+                  isInvalid={Boolean(errores.lat)}
                   name="lat"
                   onChange={handleChange}
+                  placeholder="Latitud"
+                  required
+                  type="number"
+                  value={formData.lat}
                 />
+                <Form.Control.Feedback type="invalid">{errores.lat}</Form.Control.Feedback>
 
               </Col>
 
@@ -321,10 +460,15 @@ const FormAltaCliente = () => {
 
                 <Form.Control
                   className="mb-3"
-                  placeholder="Longitud"
+                  isInvalid={Boolean(errores.long)}
                   name="long"
                   onChange={handleChange}
+                  placeholder="Longitud"
+                  required
+                  type="number"
+                  value={formData.long}
                 />
+                <Form.Control.Feedback type="invalid">{errores.long}</Form.Control.Feedback>
 
               </Col>
 
@@ -333,8 +477,8 @@ const FormAltaCliente = () => {
 
 
 
-            <Button variant="primary" type="submit">
-              Agregar Cliente
+            <Button className="registro-submit" disabled={enviando} variant="primary" type="submit">
+              {enviando ? "Guardando..." : "Agregar Cliente"}
             </Button>
 
 
