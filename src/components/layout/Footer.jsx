@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AdminContext } from '../context/AdminContext.jsx';
+import { AdminContext } from '../../context/AdminContext.jsx';
 
 const Footer = () => {
   const { admin } = useContext(AdminContext);

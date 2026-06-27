@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import FormAltaCliente from '../components/FormAltaCliente';
+import FormAltaCliente from '../components/common/FormAltaCliente';
 
 const ListaClientes = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AdminContext } from '../context/AdminContext.jsx';
-import logoEducacion from '../assets/logo-educacion.png';
+import { AdminContext } from '../../context/AdminContext.jsx';
+import logoEducacion from '../../assets/logo-educacion.png';
 
 export const Header = () => {
   const { admin, logout } = useContext(AdminContext);
