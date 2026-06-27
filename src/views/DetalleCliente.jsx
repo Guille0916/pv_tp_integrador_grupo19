@@ -63,6 +63,29 @@ const DetalleCliente = () => {
     return () => controller.abort();
   }, [id]);
 
+const handleEliminar=async()=>{
+  if(admin?.sector !== 'Gerencia'){
+   alert('Accion denegada: Solo el sector de Gerencia puede eliminar clientes.');
+   return;
+  }
+  const confirmar=windows.confirmar('¿Estas seguro de eliminar este cliente con ID ' + id + '?'); 
+  if(!confirmar){
+    return;
+  }
+  try{
+    const respuesta=await fetch(`${API_URL}/${id}`,{
+      method:'DELETE',
+    });
+    if(!respuesta.ok){
+      throw new Error('No se pudo eliminar el cliente.');
+    }
+    alert('Cliente eliminado correctamente.');
+  }catch(err){
+    alert(err.message || 'Ocurrio un error al eliminar el cliente.');
+  }
+};
+
+
   if (cargando) {
     return (
       <main className="detalle-page">
@@ -188,6 +211,14 @@ const DetalleCliente = () => {
               </div>
             </dl>
           </article>
+          {admin?.sector === 'Gerencia' && (
+            <article className="detalle-card">
+              <h2>Acciones</h2>
+              <button onClick={handleEliminar} className="btn btn-danger w-100">
+                Eliminar cliente  
+              </button>
+            </article>
+          )}
         </div>
       </section>
     </main>
