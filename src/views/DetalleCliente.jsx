@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
@@ -20,7 +20,7 @@ const DetalleCliente = () => {
   const [cliente, setCliente] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-
+const navigate = useNavigate();
   useEffect(() => {
     const controller = new AbortController();
 
@@ -68,11 +68,20 @@ const handleEliminar=async()=>{
    alert('Accion denegada: Solo el sector de Gerencia puede eliminar clientes.');
    return;
   }
-  const confirmar=windows.confirmar('¿Estas seguro de eliminar este cliente con ID ' + id + '?'); 
+  const confirmar=window.confirm('¿Estas seguro de eliminar este cliente con ID ' + id + '?'); 
   if(!confirmar){
     return;
   }
   try{
+    if(String(id).startsWith('local-')){
+      const locales=JSON.parse(localStorage.getItem(CLIENTES_LOCALES_KEY) || '[]');
+      const nuevosLocales=locales.filter((cliente)=>String(cliente.id) !== String(id));
+      localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(nuevosLocales));
+      alert('Cliente eliminado correctamente.');
+      setCliente(null);
+      navigate('/clientes');
+      return;
+    }
     const respuesta=await fetch(`${API_URL}/${id}`,{
       method:'DELETE',
     });
@@ -80,6 +89,8 @@ const handleEliminar=async()=>{
       throw new Error('No se pudo eliminar el cliente.');
     }
     alert('Cliente eliminado correctamente.');
+    setCliente(null); // simular que el cliente ha sido eliminado
+    navigate('/clientes');
   }catch(err){
     alert(err.message || 'Ocurrio un error al eliminar el cliente.');
   }
