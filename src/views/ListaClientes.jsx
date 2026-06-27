@@ -45,7 +45,7 @@ const ListaClientes = () => {
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-
+  const [buscar, setBuscar] = useState('');
   useEffect(() => {
     const cargarClientes = async () => {
       setCargando(true);
@@ -83,7 +83,17 @@ const ListaClientes = () => {
 
     cargarClientes();
   }, []);
+const clientesFiltrados = clientes.filter((cliente) => {
+    const busquedaMinuscula = buscar.toLowerCase();
+    
+    const primerNombre = cliente.name?.firstname || '';
+    const apellido = cliente.name?.lastname || '';
+    const nombreCompleto = `${primerNombre} ${apellido}`.toLowerCase();
+    
+    const ciudad = (cliente.address?.city || '').toLowerCase();
 
+    return nombreCompleto.includes(busquedaMinuscula) || ciudad.includes(busquedaMinuscula);
+  });
   return (
     <main className="clientes-page">
       <section className="clientes-header">
@@ -95,6 +105,21 @@ const ListaClientes = () => {
         <BotonRegistrarCliente />
       </section>
 
+     <div className="my-3 px-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder=" Buscar por nombre o ciudad..."
+          style={{ 
+            maxWidth: '300px',
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            border: '1px solid #ced4da'
+          }}
+          value={buscar}
+          onChange={(e) => setBuscar(e.target.value)}
+        />
+      </div>
       <section className="clientes-listado">
         <div className="clientes-toolbar">
           <h2>Clientes registrados</h2>
@@ -110,13 +135,13 @@ const ListaClientes = () => {
 
         {error && <p className="clientes-error">{error}</p>}
 
-        {!cargando && !error && clientes.length === 0 && (
+       {!cargando && !error && clientesFiltrados.length === 0 && (
           <p className="clientes-estado">No se encontraron clientes.</p>
         )}
 
-        {!cargando && !error && clientes.length > 0 && (
+       {!cargando && !error && clientesFiltrados.length > 0 && (
           <div className="clientes-grid">
-            {clientes.map((cliente) => (
+            {clientesFiltrados.map((cliente) => (
               <ClienteCard key={cliente.id} cliente={cliente} />
             ))}
           </div>
