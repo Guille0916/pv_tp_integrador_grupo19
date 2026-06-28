@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import BotonRegistrarCliente from '../components/common/BotonRegistrarCliente';
 import ClienteCard from '../components/common/ClienteCard';
-
+import Alert from "react-bootstrap/Alert";
+import Spinner from "react-bootstrap/Spinner";
+import Placeholder from "react-bootstrap/Placeholder";
+import Card from "react-bootstrap/Card";
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
@@ -124,19 +127,43 @@ const clientesFiltrados = clientes.filter((cliente) => {
         <div className="clientes-toolbar">
           <h2>Clientes registrados</h2>
         </div>
+          {cargando && (
+  <div className="clientes-grid">
+    {[1, 2, 3].map((item) => (
+      <Card key={item} className="mb-3">
+        <Card.Body>
+          <Placeholder as={Card.Title} animation="glow">
+            <Placeholder xs={6} />
+          </Placeholder>
 
-        {cargando && (
-          <div className="clientes-grid">
-            <div className="cliente-card cliente-card-loading" />
-            <div className="cliente-card cliente-card-loading" />
-            <div className="cliente-card cliente-card-loading" />
+          <Placeholder as={Card.Text} animation="glow">
+            <Placeholder xs={8} />
+            <Placeholder xs={5} />
+            <Placeholder xs={7} />
+          </Placeholder>
+
+          <div className="text-center mt-3">
+            <Spinner animation="border" variant="primary" />
           </div>
+        </Card.Body>
+      </Card>
+    ))}
+  </div>
+)}
+
+        {error && (
+          <Alert variant="danger" className="mt-3">
+            <Alert.Heading>Error al cargar clientes</Alert.Heading>
+            <p>{error}</p>
+          </Alert>
         )}
-
-        {error && <p className="clientes-error">{error}</p>}
-
-       {!cargando && !error && clientesFiltrados.length === 0 && (
-          <p className="clientes-estado">No se encontraron clientes.</p>
+            {!cargando && !error && clientesFiltrados.length === 0 && (
+            <Alert variant="warning" className="mt-3 text-center">
+            <Alert.Heading>No se encontraron clientes</Alert.Heading>
+            <p className="mb-0">
+              No hay clientes que coincidan con la búsqueda realizada.
+            </p>
+          </Alert>
         )}
 
        {!cargando && !error && clientesFiltrados.length > 0 && (
