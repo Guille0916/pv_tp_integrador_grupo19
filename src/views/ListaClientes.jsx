@@ -9,6 +9,7 @@ import ClienteCard from '../components/common/ClienteCard';
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
+const CLIENTES_ELIMINADOS_KEY = 'clientesEliminadosLocalmente';
 
 const crearFechaActividad = () => new Date().toLocaleString('es-AR', {
   dateStyle: 'short',
@@ -41,12 +42,6 @@ const guardarActividadDashboard = (actividad) => {
     actividad.tipo === 'carga-clientes' &&
     historial.some(esCargaClientes)
   ) {
-    const cargaExistente = historial.find(esCargaClientes);
-    const historialSinCargasDuplicadas = historial.filter((item) => !esCargaClientes(item));
-    localStorage.setItem(
-      ACTIVIDAD_KEY,
-      JSON.stringify([cargaExistente, ...historialSinCargasDuplicadas].slice(0, 5))
-    );
     return;
   }
 
@@ -89,7 +84,10 @@ const ListaClientes = () => {
 
         const data = await respuesta.json();
         const clientesLocales = leerStorage(CLIENTES_LOCALES_KEY, []).filter(tieneNombreCliente);
-        const clientesApi = data.filter(tieneNombreCliente);
+        const clientesEliminados = leerStorage(CLIENTES_ELIMINADOS_KEY, []).map(String);
+        const clientesApi = data
+          .filter(tieneNombreCliente)
+          .filter((cliente) => !clientesEliminados.includes(String(cliente.id)));
         const clientesCompletos = [...clientesLocales, ...clientesApi];
         localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(clientesLocales));
         setClientes(clientesCompletos);

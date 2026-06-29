@@ -11,8 +11,6 @@ const estadoInicial = {
   street: "",
   number: "",
   zipcode: "",
-  lat: "",
-  long: "",
   phone: "",
 };
 
@@ -35,10 +33,6 @@ const crearClienteDesdeFormulario = (datos) => ({
     street: datos.street,
     number: Number(datos.number),
     zipcode: datos.zipcode,
-    geolocation: {
-      lat: datos.lat,
-      long: datos.long,
-    },
   },
   phone: datos.phone,
 });
@@ -85,14 +79,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
       nuevosErrores.number = "Ingresa un numero valido.";
     }
 
-    if (datos.lat && Number.isNaN(Number(datos.lat))) {
-      nuevosErrores.lat = "Ingresa una latitud valida.";
-    }
-
-    if (datos.long && Number.isNaN(Number(datos.long))) {
-      nuevosErrores.long = "Ingresa una longitud valida.";
-    }
-
     if (datos.phone && datos.phone.length < 6) {
       nuevosErrores.phone = "Ingresa un telefono valido.";
     }
@@ -131,7 +117,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
       if (response.ok) {
         const clienteCreado = {
           ...nuevoCliente,
-          id: `local-${Date.now()}`,
           apiId: data.id ?? null,
           creadoLocalmente: true,
         };
@@ -423,49 +408,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
 
             </Row>
-
-
-
-
-            <Row>
-
-              <Col>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.lat)}
-                  name="lat"
-                  onChange={handleChange}
-                  placeholder="Latitud"
-                  required
-                  type="number"
-                  value={formData.lat}
-                />
-                <Form.Control.Feedback type="invalid">{errores.lat}</Form.Control.Feedback>
-
-              </Col>
-
-
-              <Col>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.long)}
-                  name="long"
-                  onChange={handleChange}
-                  placeholder="Longitud"
-                  required
-                  type="number"
-                  value={formData.long}
-                />
-                <Form.Control.Feedback type="invalid">{errores.long}</Form.Control.Feedback>
-
-              </Col>
-
-
-            </Row>
-
-
 
             <Button className="registro-submit" disabled={enviando} variant="primary" type="submit">
               <span>{enviando ? "Guardando..." : "Agregar Cliente"}</span>

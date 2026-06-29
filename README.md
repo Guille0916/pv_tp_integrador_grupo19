@@ -93,7 +93,7 @@ src/
 - Busqueda de clientes por apellido o ciudad.
 - Estados de carga, exito y error durante el consumo de la API.
 - Formulario de alta con validaciones y peticion POST.
-- Ficha completa de cliente con direccion, geolocalizacion y credenciales.
+- Ficha completa de cliente con direccion y credenciales.
 - Boton de eliminacion disponible solo para Gerencia.
 
 ## Instalacion y ejecucion

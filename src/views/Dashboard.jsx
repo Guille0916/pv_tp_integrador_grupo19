@@ -24,6 +24,37 @@ const ordenarActividadReciente = (items) => [...items].sort((a, b) => {
   return fechaB - fechaA;
 });
 
+const IconoActividad = ({ tipo }) => {
+  if (tipo === 'registro-cliente') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="10" cy="8" r="4" />
+        <path d="M3 20a7 7 0 0 1 14 0" />
+        <path d="M19 8v6M16 11h6" />
+      </svg>
+    );
+  }
+
+  if (tipo === 'eliminacion-cliente') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4 7h16" />
+        <path d="M10 11v6M14 11v6" />
+        <path d="M6 7l1 13h10l1-13" />
+        <path d="M9 7V4h6v3" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M5 7h14" />
+      <path d="M5 12h14" />
+      <path d="M5 17h14" />
+    </svg>
+  );
+};
+
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
   const [metricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
@@ -97,9 +128,14 @@ const Dashboard = () => {
           <ul>
             {actividad.map((item) => (
               <li key={item.id}>
-                <span>{item.fecha}</span>
-                <strong>{item.titulo}</strong>
-                <p>{item.detalle}</p>
+                <span className="dashboard-activity-icon">
+                  <IconoActividad tipo={item.tipo} />
+                </span>
+                <div>
+                  <span>{item.fecha}</span>
+                  <strong>{item.titulo}</strong>
+                  <p>{item.detalle}</p>
+                </div>
               </li>
             ))}
           </ul>

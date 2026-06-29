@@ -5,6 +5,7 @@ import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
+const CLIENTES_ELIMINADOS_KEY = 'clientesEliminadosLocalmente';
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 
@@ -49,6 +50,12 @@ const eliminarClienteApi = async (id) => {
   if (!respuesta.ok) {
     throw new Error('No se pudo simular la eliminacion del cliente.');
   }
+};
+
+const guardarClienteApiEliminado = (id) => {
+  const idsEliminados = leerStorage(CLIENTES_ELIMINADOS_KEY, []).map(String);
+  const idsActualizados = Array.from(new Set([...idsEliminados, String(id)]));
+  localStorage.setItem(CLIENTES_ELIMINADOS_KEY, JSON.stringify(idsActualizados));
 };
 
 const actualizarResumenEliminado = () => {
@@ -134,10 +141,11 @@ const DetalleCliente = () => {
     setError('');
 
     try {
-      if (String(id).startsWith('local-')) {
+      if (cliente.creadoLocalmente) {
         eliminarClienteLocal(id);
       } else {
         await eliminarClienteApi(id);
+        guardarClienteApiEliminado(id);
       }
 
       actualizarResumenEliminado();
@@ -198,7 +206,6 @@ const DetalleCliente = () => {
 
   const nombreCompleto = `${name.firstname ?? ''} ${name.lastname ?? ''}`.trim() || 'Cliente';
   const iniciales = `${name.firstname?.[0] ?? ''}${name.lastname?.[0] ?? ''}`.toUpperCase() || 'CL';
-  const geolocation = address.geolocation ?? {};
 
   return (
     <main className="detalle-page">
@@ -293,14 +300,6 @@ const DetalleCliente = () => {
               <div>
                 <dt>Codigo postal</dt>
                 <dd>{address.zipcode}</dd>
-              </div>
-              <div>
-                <dt>Geolocalizacion</dt>
-                <dd>
-                  {geolocation.lat && geolocation.long
-                    ? `${geolocation.lat}, ${geolocation.long}`
-                    : 'Sin datos'}
-                </dd>
               </div>
             </dl>
           </article>
