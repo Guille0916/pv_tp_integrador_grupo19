@@ -1,35 +1,65 @@
-import {createContext, useState, useEffect }from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-//hola aqui dejo los comentario para estudiar = aqui es cuando se  crea el contexto 
-export const AdminContext = createContext();
+const STORAGE_KEY = 'adminSesion';
+const STORAGE_VERSION_KEY = 'clientesStorageVersion';
+const STORAGE_VERSION = 'ids-secuenciales-v2';
+const STORAGE_DATOS_CLIENTES = [
+  'clientesRegistradosLocalmente',
+  'clientesEliminadosLocalmente',
+  'registroActividadClientes',
+  'resumenClientesDashboard',
+];
 
-//AQUI creando el provedor de contexto (provider)
-export const AdminProvider = ({children}) => {
+const reiniciarDatosLocalesSiHaceFalta = () => {
+  if (localStorage.getItem(STORAGE_VERSION_KEY) === STORAGE_VERSION) {
+    return;
+  }
 
-    //el estado global del administrador.
-    const [admin, setAdmin] = useState(()=>{
-        //aqui se obtiene el administrador del localStorage
-        const saveAdmin = localStorage.getItem('admin');
-
-        //aqui se retorna el administrador si existe, si no retorna null
-        return saveAdmin ? JSON.parse(saveAdmin) : null;
-    });
-    
-//funcion global guardar la sesion al precionar el boton ingresar
-const  login = (adminData) => {
-    setAdmin(adminData);
-    localStorage.setItem('adminSeccion', JSON.stringify(adminData));
+  STORAGE_DATOS_CLIENTES.forEach((key) => localStorage.removeItem(key));
+  localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 };
 
-//funcion global para borrar la seccion al "cerrar seccion"
-const logout = () => {
-    setAdmin(null);
-    localStorage.removeItem('adminSeccion');
-}
+// eslint-disable-next-line react-refresh/only-export-components
+export const AdminContext = createContext();
 
-    return (
-        <AdminContext.Provider value={{ admin, login, logout }}>
-            {children}
-        </AdminContext.Provider>
-    );
+export const AdminProvider = ({ children }) => {
+  const [admin, setAdmin] = useState(() => {
+    reiniciarDatosLocalesSiHaceFalta();
+
+    const savedAdmin =
+      localStorage.getItem(STORAGE_KEY) ||
+      localStorage.getItem('adminSeccion') ||
+      localStorage.getItem('admin');
+
+    try {
+      return savedAdmin ? JSON.parse(savedAdmin) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (admin) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(admin));
+      return;
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('adminSeccion');
+    localStorage.removeItem('admin');
+  }, [admin]);
+
+  const login = (adminData) => {
+    setAdmin(adminData);
+  };
+
+  const logout = () => {
+    setAdmin(null);
+  };
+
+  return (
+    <AdminContext.Provider value={{ admin, login, logout }}>
+      {children}
+    </AdminContext.Provider>
+  );
 };

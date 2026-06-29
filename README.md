@@ -1,16 +1,98 @@
-# React + Vite
+# PV TP Integrador - Grupo 19
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción del proyecto
 
-Currently, two official plugins are available:
+Aplicación web desarrollada con React y Vite orientada a la gestión y consulta de clientes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+El sistema permite iniciar sesión mediante sectores con permisos diferenciados, visualizar información de clientes, realizar búsquedas y gestionar acciones según el rol del usuario.
 
-## React Compiler
+La aplicación implementa control de acceso mediante contexto de React y rutas protegidas.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Integrantes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Acho Gimenez Guillermo Miguel - GitHub: Guille0916
+- Giron Luciano Gabriel - GitHub: Lucianogiron10
+- Quintanilla Anahi Mikaela - GitHub: AniQuintanilla13-debug
+- Mamani Noe Franco - GitHub: Francozxy
+- Fernandez Lautaro Ariel - GitHub: lautarofernandez17
+
+---
+
+## Roles disponibles
+
+### Soporte
+
+Permisos:
+
+- Iniciar sesión.
+- Acceder al dashboard.
+- Consultar clientes.
+- Buscar clientes.
+- Visualizar detalle de clientes.
+
+### Gerencia
+
+Permisos:
+
+- Iniciar sesión.
+- Acceder al dashboard.
+- Consultar clientes.
+- Buscar clientes.
+- Visualizar detalle de clientes.
+- Eliminar clientes.
+
+El rol Administrador no forma parte de la lógica de permisos del sistema.
+
+---
+
+## Tecnologías utilizadas
+
+- React 19
+- Vite
+- JavaScript
+- React Router DOM
+- React Bootstrap
+- Bootstrap
+- CSS
+
+---
+
+## API utilizada
+
+Para la gestión de datos de clientes se utiliza:
+
+FakeStore API
+
+https://fakestoreapi.com/
+
+---
+
+## Estructura principal del proyecto
+
+```txt
+src/
+  assets/
+  components/
+    common/
+    layout/
+  context/
+  views/
+```
+
+## Funcionalidades implementadas
+
+- Login con nombre y sector.
+- Persistencia de sesion con LocalStorage.
+- Rutas protegidas para dashboard, clientes, registro y detalle.
+- Header con datos del usuario y cierre de sesion.
+- Footer con redes sociales y derechos.
+- Dashboard con saludo, metricas y registro de actividad.
+- Listado de clientes en cards.
+- Busqueda de clientes por apellido o ciudad.
+- Estados de carga, exito y error durante el consumo de la API.
+- Formulario de alta con validaciones y peticion POST.
+- Ficha completa de cliente con direccion y credenciales.
+- Boton de eliminacion disponible solo para Gerencia.
+
