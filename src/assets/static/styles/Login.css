@@ -1,8 +1,42 @@
 
 .bg-login-gradient {
+  position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(147, 197, 253, 0.22), transparent 32%),
-    linear-gradient(135deg, #181d25 0%, #101827 52%, #2d3748 100%);
+    radial-gradient(circle at 74% 18%, rgba(191, 219, 254, 0.72) 0 42px, rgba(147, 197, 253, 0.18) 43px 72px, transparent 73px),
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.5) 0 1px, transparent 2px),
+    radial-gradient(circle at 36% 14%, rgba(255, 255, 255, 0.45) 0 1px, transparent 2px),
+    radial-gradient(circle at 61% 31%, rgba(255, 255, 255, 0.34) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 38%, rgba(255, 255, 255, 0.32) 0 1px, transparent 2px),
+    linear-gradient(180deg, #08111f 0%, #101a2c 42%, #172236 68%, #0c121d 100%);
+}
+
+.bg-login-gradient::before {
+  position: absolute;
+  right: -4%;
+  bottom: 0;
+  left: -4%;
+  height: 56%;
+  background:
+    linear-gradient(180deg, rgba(31, 50, 78, 0.86), rgba(13, 23, 38, 0.98)),
+    linear-gradient(135deg, transparent 0 20%, rgba(147, 197, 253, 0.2) 20% 21%, transparent 21% 100%);
+  clip-path: polygon(0 78%, 8% 57%, 15% 66%, 23% 34%, 32% 62%, 41% 25%, 51% 63%, 61% 39%, 70% 67%, 80% 31%, 91% 60%, 100% 43%, 100% 100%, 0 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.bg-login-gradient::after {
+  position: absolute;
+  right: -8%;
+  bottom: -1px;
+  left: -8%;
+  height: 38%;
+  background:
+    linear-gradient(180deg, rgba(9, 19, 33, 0.98), #050914),
+    linear-gradient(90deg, transparent 0 18%, rgba(147, 197, 253, 0.1) 18% 19%, transparent 19% 100%);
+  clip-path: polygon(0 64%, 10% 48%, 18% 55%, 28% 34%, 37% 51%, 49% 26%, 60% 50%, 70% 37%, 81% 58%, 91% 42%, 100% 60%, 100% 100%, 0 100%);
+  content: "";
+  pointer-events: none;
 }
 
 .login-page {
@@ -17,6 +51,8 @@
 }
 
 .login-card {
+  position: relative;
+  z-index: 2;
   width: min(430px, 100%);
   border: 1px solid rgba(174, 184, 197, 0.55);
   border-radius: 12px;

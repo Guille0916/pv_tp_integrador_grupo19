@@ -4,6 +4,7 @@ import FormAltaCliente from '../components/common/FormAltaCliente';
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
+const CANTIDAD_CLIENTES_API = 10;
 
 const crearFechaActividad = () => new Date().toLocaleString('es-AR', {
   dateStyle: 'short',
@@ -30,15 +31,31 @@ const tieneNombreCliente = (cliente) => {
   return Boolean(firstname && lastname);
 };
 
+const obtenerIdNumerico = (cliente) => {
+  const id = Number(cliente.id);
+  return Number.isFinite(id) ? id : 0;
+};
+
+const obtenerSiguienteId = (clientesLocales) => {
+  const idsLocales = clientesLocales.map(obtenerIdNumerico);
+  return Math.max(CANTIDAD_CLIENTES_API, ...idsLocales) + 1;
+};
+
 const guardarClienteLocal = (clienteCreado) => {
   const clientesLocales = leerStorage(CLIENTES_LOCALES_KEY, []).filter(tieneNombreCliente);
-  const localesActualizados = [clienteCreado, ...clientesLocales];
+  const clienteConId = {
+    ...clienteCreado,
+    id: obtenerSiguienteId(clientesLocales),
+    creadoLocalmente: true,
+  };
+  const localesActualizados = [clienteConId, ...clientesLocales];
   localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(localesActualizados));
+  return clienteConId;
 };
 
 const RegistroCliente = () => {
   const handleClienteCreado = (clienteCreado) => {
-    guardarClienteLocal(clienteCreado);
+    const clienteGuardado = guardarClienteLocal(clienteCreado);
 
     const resumenActual = leerStorage(RESUMEN_KEY, {
       clientes: 0,
@@ -48,11 +65,11 @@ const RegistroCliente = () => {
 
     localStorage.setItem(RESUMEN_KEY, JSON.stringify({
       clientes: resumenActual.clientes + 1,
-      contactos: resumenActual.contactos + (clienteCreado.email && clienteCreado.phone ? 1 : 0),
-      fichas: resumenActual.fichas + (clienteCreado.username && clienteCreado.password ? 1 : 0),
+      contactos: resumenActual.contactos + (clienteGuardado.email && clienteGuardado.phone ? 1 : 0),
+      fichas: resumenActual.fichas + (clienteGuardado.username && clienteGuardado.password ? 1 : 0),
     }));
 
-    const nombreCompleto = `${clienteCreado.name?.firstname ?? ''} ${clienteCreado.name?.lastname ?? ''}`.trim();
+    const nombreCompleto = `${clienteGuardado.name?.firstname ?? ''} ${clienteGuardado.name?.lastname ?? ''}`.trim();
 
     guardarActividadDashboard({
       id: Date.now(),
