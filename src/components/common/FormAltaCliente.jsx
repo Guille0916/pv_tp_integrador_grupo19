@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Form, Button, Container, Row, Col, Alert, Card } from "react-bootstrap";
 
 const estadoInicial = {
@@ -16,44 +16,52 @@ const estadoInicial = {
   phone: "",
 };
 
-const camposObligatorios = [
-  "firstname",
-  "lastname",
-  "email",
-  "username",
-  "password",
-  "city",
-  "street",
-  "number",
-  "zipcode",
-  "lat",
-  "long",
-  "phone",
-];
+const camposObligatorios = Object.keys(estadoInicial);
 
 const normalizarFormulario = (formData) => Object.fromEntries(
   Object.entries(formData).map(([key, value]) => [key, value.trim()])
 );
 
+const crearClienteDesdeFormulario = (datos) => ({
+  email: datos.email,
+  username: datos.username,
+  password: datos.password,
+  name: {
+    firstname: datos.firstname,
+    lastname: datos.lastname,
+  },
+  address: {
+    city: datos.city,
+    street: datos.street,
+    number: Number(datos.number),
+    zipcode: datos.zipcode,
+    geolocation: {
+      lat: datos.lat,
+      long: datos.long,
+    },
+  },
+  phone: datos.phone,
+});
+
 const FormAltaCliente = ({ onClienteCreado }) => {
-
   const [formData, setFormData] = useState(estadoInicial);
-
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState("success");
   const [enviando, setEnviando] = useState(false);
   const [errores, setErrores] = useState({});
 
-
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setErrores({
-      ...errores,
-      [e.target.name]: "",
-    });
+    const { name, value } = e.target;
+
+    setFormData((datosActuales) => ({
+      ...datosActuales,
+      [name]: value,
+    }));
+
+    setErrores((erroresActuales) => ({
+      ...erroresActuales,
+      [name]: "",
+    }));
   };
 
   const validarFormulario = (datos) => {
@@ -70,7 +78,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
     }
 
     if (datos.password && datos.password.length < 4) {
-      nuevosErrores.password = "La contrasena debe tener al menos 4 caracteres.";
+      nuevosErrores.password = "La Contrasena debe tener al menos 4 caracteres.";
     }
 
     if (datos.number && (Number.isNaN(Number(datos.number)) || Number(datos.number) <= 0)) {
@@ -92,7 +100,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
     return nuevosErrores;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje("");
@@ -108,50 +115,20 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
     setEnviando(true);
 
-    const nuevoCliente = {
-      email: datos.email,
-      username: datos.username,
-      password: datos.password,
-
-      name: {
-        firstname: datos.firstname,
-        lastname: datos.lastname,
-      },
-
-      address: {
-        city: datos.city,
-        street: datos.street,
-        number: Number(datos.number),
-        zipcode: datos.zipcode,
-
-        geolocation: {
-          lat: datos.lat,
-          long: datos.long,
-        },
-      },
-
-      phone: datos.phone,
-    };
-
+    const nuevoCliente = crearClienteDesdeFormulario(datos);
 
     try {
-
-      const response = await fetch(
-        "https://fakestoreapi.com/users",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body: JSON.stringify(nuevoCliente)
-        }
-      );
-
+      const response = await fetch("https://fakestoreapi.com/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevoCliente),
+      });
 
       const data = await response.json();
 
-
-      if(response.ok){
+      if (response.ok) {
         const clienteCreado = {
           ...nuevoCliente,
           id: `local-${Date.now()}`,
@@ -167,21 +144,16 @@ const FormAltaCliente = ({ onClienteCreado }) => {
         setErrores({});
         setFormData(estadoInicial);
         setTimeout(() => {
-        setMensaje("");
-        setTipoMensaje("");
-      }, 3000);
-      }
-      else{
+          setMensaje("");
+          setTipoMensaje("");
+        }, 3000);
+      } else {
         setTipoMensaje("danger");
         setMensaje("No se pudo crear el cliente");
       }
-
-
     } catch {
-
       setTipoMensaje("danger");
       setMensaje("Error de conexion");
-
     } finally {
       setEnviando(false);
     }
@@ -198,13 +170,18 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
         <Card.Body>
 
-          <Card.Title>
-            Registrar cliente
-          </Card.Title>
+          <div className="registro-form-heading">
+            <div>
+              <Card.Title>
+                Registrar cliente
+              </Card.Title>
+            </div>
+            <span className="registro-form-badge">Nuevo</span>
+          </div>
 
 
           {mensaje && 
-            <Alert variant={tipoMensaje}>
+            <Alert className="registro-alert" variant={tipoMensaje}>
               {mensaje}
             </Alert>
           }
@@ -227,6 +204,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.firstname)}
                     name="firstname"
                     onChange={handleChange}
+                    placeholder="Ej: Nombre"
                     required
                     value={formData.firstname}
                   />
@@ -248,6 +226,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.lastname)}
                     name="lastname"
                     onChange={handleChange}
+                    placeholder="Ej: Apellido"
                     required
                     value={formData.lastname}
                   />
@@ -276,6 +255,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.email)}
                     name="email"
                     onChange={handleChange}
+                    placeholder="cliente@correo.com"
                     required
                     type="email"
                     value={formData.email}
@@ -300,6 +280,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.username)}
                     name="username"
                     onChange={handleChange}
+                    placeholder="usuario.cliente"
                     required
                     value={formData.username}
                   />
@@ -316,13 +297,14 @@ const FormAltaCliente = ({ onClienteCreado }) => {
             <Form.Group className="mb-3">
 
               <Form.Label>
-                Contraseña
+                Contrasena
               </Form.Label>
 
               <Form.Control
                 isInvalid={Boolean(errores.password)}
                 name="password"
                 onChange={handleChange}
+                placeholder="Minimo 4 caracteres"
                 required
                 type="password"
                 value={formData.password}
@@ -348,10 +330,10 @@ const FormAltaCliente = ({ onClienteCreado }) => {
     >
       <option value="" disabled>Selecciona tu ciudad...</option>
       <option value="San Salvador de Jujuy">San Salvador de Jujuy</option>
-      <option value="Palpalá">Palpalá</option>
+      <option value="Palpala">Palpala</option>
       <option value="El Carmen">El Carmen</option>
       <option value="San Pedro de Jujuy">San Pedro de Jujuy</option>
-      <option value="Libertador General San Martín">Libertador General San Martín</option>
+      <option value="Libertador General San Martin">Libertador General San Martin</option>
       <option value="La Quiaca">La Quiaca</option>
     </Form.Select>
     <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
@@ -373,6 +355,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.street)}
                     name="street"
                     onChange={handleChange}
+                    placeholder="Ej: Belgrano"
                     required
                     value={formData.street}
                   />
@@ -485,7 +468,10 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
 
             <Button className="registro-submit" disabled={enviando} variant="primary" type="submit">
-              {enviando ? "Guardando..." : "Agregar Cliente"}
+              <span>{enviando ? "Guardando..." : "Agregar Cliente"}</span>
+              <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
             </Button>
 
 
@@ -505,3 +491,4 @@ const FormAltaCliente = ({ onClienteCreado }) => {
 
 
 export default FormAltaCliente;
+

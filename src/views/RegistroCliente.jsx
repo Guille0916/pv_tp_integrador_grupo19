@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import BotonVolverClientes from '../components/common/BotonVolverClientes';
 import FormAltaCliente from '../components/common/FormAltaCliente';
 
 const ACTIVIDAD_KEY = 'registroActividadClientes';
@@ -56,8 +56,9 @@ const RegistroCliente = () => {
 
     guardarActividadDashboard({
       id: Date.now(),
+      tipo: 'registro-cliente',
       titulo: 'Cliente registrado',
-      detalle: `Se registro ${nombreCompleto} desde el formulario de alta.`,
+      detalle: `Se registro ${nombreCompleto}.`,
       fecha: crearFechaActividad(),
     });
   };
@@ -65,7 +66,7 @@ const RegistroCliente = () => {
   return (
     <main className="registro-page">
       <section className="registro-shell">
-        <Link className="detalle-back" to="/clientes">Volver a clientes</Link>
+        <BotonVolverClientes />
         <FormAltaCliente onClienteCreado={handleClienteCreado} />
       </section>
     </main>

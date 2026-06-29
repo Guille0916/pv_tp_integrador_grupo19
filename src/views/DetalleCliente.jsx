@@ -1,9 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import BotonVolverClientes from '../components/common/BotonVolverClientes';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
+const ACTIVIDAD_KEY = 'registroActividadClientes';
+const RESUMEN_KEY = 'resumenClientesDashboard';
 
 const obtenerClienteLocal = (id) => {
   try {
@@ -14,13 +17,64 @@ const obtenerClienteLocal = (id) => {
   }
 };
 
+const leerStorage = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+  } catch {
+    return fallback;
+  }
+};
+
+const crearFechaActividad = () => new Date().toLocaleString('es-AR', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+});
+
+const guardarActividadDashboard = (actividad) => {
+  const historial = leerStorage(ACTIVIDAD_KEY, []);
+  localStorage.setItem(ACTIVIDAD_KEY, JSON.stringify([actividad, ...historial].slice(0, 5)));
+};
+
+const eliminarClienteLocal = (id) => {
+  const locales = leerStorage(CLIENTES_LOCALES_KEY, []);
+  const nuevosLocales = locales.filter((clienteLocal) => String(clienteLocal.id) !== String(id));
+  localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(nuevosLocales));
+};
+
+const eliminarClienteApi = async (id) => {
+  const respuesta = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!respuesta.ok) {
+    throw new Error('No se pudo simular la eliminacion del cliente.');
+  }
+};
+
+const actualizarResumenEliminado = () => {
+  const resumen = leerStorage(RESUMEN_KEY, {
+    clientes: 0,
+    contactos: 0,
+    fichas: 0,
+  });
+
+  localStorage.setItem(RESUMEN_KEY, JSON.stringify({
+    clientes: Math.max((resumen.clientes || 0) - 1, 0),
+    contactos: Math.max((resumen.contactos || 0) - 1, 0),
+    fichas: Math.max((resumen.fichas || 0) - 1, 0),
+  }));
+};
+
 const DetalleCliente = () => {
   const { id } = useParams();
   const { admin } = useContext(AdminContext);
+  const navigate = useNavigate();
   const [cliente, setCliente] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
-const navigate = useNavigate();
+  const [eliminando, setEliminando] = useState(false);
+  const [mensajeDelete, setMensajeDelete] = useState('');
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -63,38 +117,46 @@ const navigate = useNavigate();
     return () => controller.abort();
   }, [id]);
 
-const handleEliminar=async()=>{
-  if(admin?.sector !== 'Gerencia'){
-   alert('Accion denegada: Solo el sector de Gerencia puede eliminar clientes.');
-   return;
-  }
-  const confirmar=window.confirm('¿Estas seguro de eliminar este cliente con ID ' + id + '?'); 
-  if(!confirmar){
-    return;
-  }
-  try{
-    if(String(id).startsWith('local-')){
-      const locales=JSON.parse(localStorage.getItem(CLIENTES_LOCALES_KEY) || '[]');
-      const nuevosLocales=locales.filter((cliente)=>String(cliente.id) !== String(id));
-      localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(nuevosLocales));
-      alert('Cliente eliminado correctamente.');
-      setCliente(null);
-      navigate('/clientes');
+  const handleEliminar = async () => {
+    if (admin?.sector !== 'Gerencia' || !cliente) {
       return;
     }
-    const respuesta=await fetch(`${API_URL}/${id}`,{
-      method:'DELETE',
-    });
-    if(!respuesta.ok){
-      throw new Error('No se pudo eliminar el cliente.');
+
+    const nombreCompleto = `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim();
+    const confirmar = window.confirm(`Seguro que queres eliminar a ${nombreCompleto}?`);
+
+    if (!confirmar) {
+      return;
     }
-    alert('Cliente eliminado correctamente.');
-    setCliente(null); // simular que el cliente ha sido eliminado
-    navigate('/clientes');
-  }catch(err){
-    alert(err.message || 'Ocurrio un error al eliminar el cliente.');
-  }
-};
+
+    setEliminando(true);
+    setMensajeDelete('');
+    setError('');
+
+    try {
+      if (String(id).startsWith('local-')) {
+        eliminarClienteLocal(id);
+      } else {
+        await eliminarClienteApi(id);
+      }
+
+      actualizarResumenEliminado();
+      guardarActividadDashboard({
+        id: Date.now(),
+        tipo: 'eliminacion-cliente',
+        titulo: 'Cliente eliminado',
+        detalle: `Se elimino ${nombreCompleto}.`,
+        fecha: crearFechaActividad(),
+      });
+
+      setMensajeDelete(`Cliente ${nombreCompleto} eliminado correctamente.`);
+      setTimeout(() => navigate('/clientes'), 1200);
+    } catch (err) {
+      setError(err.message || 'Ocurrio un error al eliminar el cliente.');
+    } finally {
+      setEliminando(false);
+    }
+  };
 
 
   if (cargando) {
@@ -114,7 +176,7 @@ const handleEliminar=async()=>{
     return (
       <main className="detalle-page">
         <div className="detalle-shell">
-          <Link className="detalle-back" to="/clientes">Volver a clientes</Link>
+          <BotonVolverClientes />
           <div className="detalle-alert detalle-alert-error">{error}</div>
         </div>
       </main>
@@ -136,28 +198,50 @@ const handleEliminar=async()=>{
 
   const nombreCompleto = `${name.firstname ?? ''} ${name.lastname ?? ''}`.trim() || 'Cliente';
   const iniciales = `${name.firstname?.[0] ?? ''}${name.lastname?.[0] ?? ''}`.toUpperCase() || 'CL';
+  const geolocation = address.geolocation ?? {};
 
   return (
     <main className="detalle-page">
       <section className="detalle-shell">
         <div className="detalle-topbar">
-          <Link className="detalle-back" to="/clientes">Volver a clientes</Link>
-          <span className={`detalle-role ${admin?.sector === 'Gerencia' ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
-            {admin?.sector ?? 'Sin sector'}
-          </span>
+          <BotonVolverClientes />
+          <div className="detalle-top-actions">
+            <span className={`detalle-role ${admin?.sector === 'Gerencia' ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
+              {admin?.sector ?? 'Sin sector'}
+            </span>
+          </div>
         </div>
 
         <header className="detalle-header">
           <div className="detalle-persona">
             <div className="detalle-avatar" aria-hidden="true">{iniciales}</div>
-            <div>
-              <p className="detalle-kicker">Ficha completa</p>
-              <h1>{nombreCompleto}</h1>
-              <div className="detalle-meta">
-                <span>ID #{cliente.id}</span>
-                <span>{email}</span>
-                <span>{phone}</span>
+            <div className="detalle-persona-main">
+              <div>
+                <p className="detalle-kicker">Ficha completa</p>
+                <h1>{nombreCompleto}</h1>
+                <div className="detalle-meta">
+                  <span>ID #{cliente.id}</span>
+                  <span>{email}</span>
+                  <span>{phone}</span>
+                </div>
               </div>
+              {admin?.sector === 'Gerencia' && (
+                <button
+                  aria-label="Eliminar Cliente de la Base de Datos"
+                  className="detalle-delete detalle-delete-icon"
+                  disabled={eliminando}
+                  onClick={handleEliminar}
+                  title="Eliminar Cliente de la Base de Datos"
+                  type="button"
+                >
+                  <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M4 7h16" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M6 7l1 13h10l1-13" />
+                    <path d="M9 7V4h6v3" />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -166,6 +250,10 @@ const handleEliminar=async()=>{
           <div className="detalle-alert detalle-alert-info">
             Perfil Soporte: acceso de solo lectura a la ficha del cliente.
           </div>
+        )}
+
+        {mensajeDelete && (
+          <div className="detalle-alert detalle-alert-success">{mensajeDelete}</div>
         )}
 
         {error && (
@@ -206,6 +294,14 @@ const handleEliminar=async()=>{
                 <dt>Codigo postal</dt>
                 <dd>{address.zipcode}</dd>
               </div>
+              <div>
+                <dt>Geolocalizacion</dt>
+                <dd>
+                  {geolocation.lat && geolocation.long
+                    ? `${geolocation.lat}, ${geolocation.long}`
+                    : 'Sin datos'}
+                </dd>
+              </div>
             </dl>
           </article>
 
@@ -222,14 +318,6 @@ const handleEliminar=async()=>{
               </div>
             </dl>
           </article>
-          {admin?.sector === 'Gerencia' && (
-            <article className="detalle-card">
-              <h2>Acciones</h2>
-              <button onClick={handleEliminar} className="btn btn-danger w-100">
-                Eliminar cliente  
-              </button>
-            </article>
-          )}
         </div>
       </section>
     </main>
