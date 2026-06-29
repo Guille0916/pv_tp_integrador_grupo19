@@ -3,49 +3,53 @@ import { AdminContext } from '../context/AdminContext.jsx';
 
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
+const RESUMEN_INICIAL = {
+  clientes: 0,
+  contactos: 0,
+  fichas: 0,
+};
+
+const leerStorage = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+  } catch {
+    return fallback;
+  }
+};
+
+const ordenarActividadReciente = (items) => [...items].sort((a, b) => {
+  const fechaA = typeof a.id === 'number' ? a.id : 0;
+  const fechaB = typeof b.id === 'number' ? b.id : 0;
+
+  return fechaB - fechaA;
+});
 
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
-  const [metricas] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(RESUMEN_KEY) || '{"clientes":0,"contactos":0,"fichas":0}');
-    } catch {
-      return {
-        clientes: 0,
-        contactos: 0,
-        fichas: 0,
-      };
-    }
-  });
+  const [metricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
   const [actividad] = useState(() => {
-    try {
-      const historial = JSON.parse(localStorage.getItem(ACTIVIDAD_KEY) || '[]');
+    const historial = leerStorage(ACTIVIDAD_KEY, []);
 
-      if (historial.length > 0) {
-        return historial;
-      }
-
-      const resumen = JSON.parse(localStorage.getItem(RESUMEN_KEY) || '{"clientes":0}');
-
-      if (resumen.clientes > 0) {
-        return [{
-          id: 'resumen-clientes',
-          fecha: 'Actividad reciente',
-          titulo: 'Lista de clientes cargada',
-          detalle: `Se consultaron ${resumen.clientes} clientes.`,
-        }];
-      }
-
-      return [];
-    } catch {
-      return [];
+    if (historial.length > 0) {
+      return ordenarActividadReciente(historial);
     }
+
+    const resumen = leerStorage(RESUMEN_KEY, RESUMEN_INICIAL);
+
+    if (resumen.clientes > 0) {
+      return [{
+        id: 'resumen-clientes',
+        fecha: 'Actividad reciente',
+        titulo: 'Lista de clientes cargada',
+        detalle: `Se consultaron ${resumen.clientes} clientes.`,
+      }];
+    }
+
+    return [];
   });
 
   const metricasSeguras = {
-    clientes: 0,
-    contactos: 0,
-    fichas: 0,
+    ...RESUMEN_INICIAL,
     ...metricas,
   };
 
