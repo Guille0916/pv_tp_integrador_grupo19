@@ -327,6 +327,11 @@ a {
   line-height: 1.1;
 }
 
+.dashboard-welcome-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
 .dashboard-user-name {
   border-radius: 8px;
   padding: 4px 10px;

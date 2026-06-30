@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { MdContactPhone, MdPeople, MdDescription } from 'react-icons/md';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const ACTIVIDAD_KEY = 'registroActividadClientes';
@@ -58,15 +57,33 @@ const IconoActividad = ({ tipo }) => {
 
 const MetricIcon = ({ tipo }) => {
   if (tipo === 'clientes') {
-    return <MdPeople aria-hidden="true" size="2.2em" />;
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 21c0-3.5 2.8-6 7-6s7 2.5 7 6" />
+        <path d="M3 9.5c0-1.6 1.2-3 2.8-3s2.8 1.4 2.8 3" />
+      </svg>
+    );
   }
 
   if (tipo === 'contactos') {
-    return <MdContactPhone aria-hidden="true" size="2.2em" />;
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.72 11.72 0 003.68.58 1 1 0 011 1v3.5a1 1 0 01-1 1A17.91 17.91 0 013 6a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.58 3.68 1 1 0 01-.21 1.11l-2.2 2.2z" />
+      </svg>
+    );
   }
 
   if (tipo === 'fichas') {
-    return <MdDescription aria-hidden="true" size="2.2em" />;
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M7 3h8l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+        <path d="M15 3v5h5" />
+        <path d="M9 9h6" />
+        <path d="M9 13h3" />
+        <path d="M9 17l1.5 1.5 4-4" />
+      </svg>
+    );
   }
 
   return (
@@ -135,7 +152,7 @@ const Dashboard = () => {
       <section className="dashboard-welcome">
         <div className="dashboard-welcome-copy">
           <h1>
-            <span aria-hidden="true">{'\uD83D\uDC4B'}</span>
+            <span className="dashboard-welcome-emoji" aria-hidden="true">{'\uD83D\uDC4B'}</span>
             Bienvenido, <span className="dashboard-user-name">{adminName}</span>
           </h1>
           <p className="dashboard-intro">
