@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { MdContactPhone, MdPeople, MdDescription } from 'react-icons/md';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const ACTIVIDAD_KEY = 'registroActividadClientes';
@@ -55,6 +56,26 @@ const IconoActividad = ({ tipo }) => {
   );
 };
 
+const MetricIcon = ({ tipo }) => {
+  if (tipo === 'clientes') {
+    return <MdPeople aria-hidden="true" size="2.2em" />;
+  }
+
+  if (tipo === 'contactos') {
+    return <MdContactPhone aria-hidden="true" size="2.2em" />;
+  }
+
+  if (tipo === 'fichas') {
+    return <MdDescription aria-hidden="true" size="2.2em" />;
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+    </svg>
+  );
+};
+
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
   const [metricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
@@ -79,10 +100,35 @@ const Dashboard = () => {
     return [];
   });
 
+  const adminName = admin?.nombre || 'Administrador';
+  const adminSector = admin?.sector || 'Sin sector asignado';
+  const actividadReciente = actividad.slice(0, 5);
+
   const metricasSeguras = {
     ...RESUMEN_INICIAL,
     ...metricas,
   };
+
+  const metricasItems = [
+    {
+      key: 'clientes',
+      label: 'Clientes',
+      valor: metricasSeguras.clientes,
+      icono: 'clientes',
+    },
+    {
+      key: 'contactos',
+      label: 'Contactos',
+      valor: metricasSeguras.contactos,
+      icono: 'contactos',
+    },
+    {
+      key: 'fichas',
+      label: 'Fichas completas',
+      valor: metricasSeguras.fichas,
+      icono: 'fichas',
+    },
+  ];
 
   return (
     <main className="dashboard-page">
@@ -90,26 +136,34 @@ const Dashboard = () => {
         <div className="dashboard-welcome-copy">
           <h1>
             <span aria-hidden="true">{'\uD83D\uDC4B'}</span>
-            Bienvenido, <span className="dashboard-user-name">{admin?.nombre}</span>
+            Bienvenido, <span className="dashboard-user-name">{adminName}</span>
           </h1>
           <p className="dashboard-intro">
             Tenes acceso al sistema de gestion de clientes.
           </p>
-          <span className="dashboard-role-pill">Sector: {admin?.sector}</span>
+          <span className="dashboard-role-pill">Sector: {adminSector}</span>
         </div>
 
         <div className="dashboard-summary">
-          <div>
-            <span>Clientes</span>
-            <strong>{metricasSeguras.clientes}</strong>
+          <div className="dashboard-summary-header">
+            <p className="dashboard-kicker">Resumen general</p>
+            <h2>Estado actual</h2>
           </div>
-          <div>
-            <span>Contactos</span>
-            <strong>{metricasSeguras.contactos}</strong>
-          </div>
-          <div>
-            <span>Fichas completas</span>
-            <strong>{metricasSeguras.fichas}</strong>
+
+          <div className="dashboard-summary-grid">
+            {metricasItems.map((item) => (
+              <article key={item.key} className="dashboard-summary-card shadow-sm">
+                <div>
+                  <span className="dashboard-summary-icon" aria-hidden="true">
+                    <MetricIcon tipo={item.icono} />
+                  </span>
+                </div>
+                <div>
+                  <span>{item.label}</span>
+                  <strong>{item.valor}</strong>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -125,20 +179,27 @@ const Dashboard = () => {
             El registro se completara cuando se cargue la lista de clientes desde la API.
           </p>
         ) : (
-          <ul>
-            {actividad.map((item) => (
-              <li key={item.id}>
-                <span className="dashboard-activity-icon">
-                  <IconoActividad tipo={item.tipo} />
-                </span>
-                <div>
-                  <span>{item.fecha}</span>
-                  <strong>{item.titulo}</strong>
-                  <p>{item.detalle}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul>
+              {actividadReciente.map((item) => (
+                <li key={item.id}>
+                  <span className="dashboard-activity-icon">
+                    <IconoActividad tipo={item.tipo} />
+                  </span>
+                  <div>
+                    <span>{item.fecha}</span>
+                    <strong>{item.titulo}</strong>
+                    <p>{item.detalle}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {actividad.length > actividadReciente.length && (
+              <p className="dashboard-activity-note">
+                Mostrando los últimos {actividadReciente.length} movimientos de {actividad.length} totales.
+              </p>
+            )}
+          </>
         )}
       </section>
     </main>
