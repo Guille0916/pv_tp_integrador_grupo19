@@ -933,6 +933,11 @@ a {
   font-weight: 800;
 }
 
+.registro-alert-bottom {
+  width: min(460px, 100%);
+  margin: 2px 0 0;
+}
+
 .registro-form-card form {
   display: grid;
   gap: 14px;
