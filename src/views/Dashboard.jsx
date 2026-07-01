@@ -1,6 +1,7 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AdminContext } from '../context/AdminContext.jsx';
 
+const API_URL = 'https://fakestoreapi.com/users';
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 const RESUMEN_INICIAL = {
@@ -23,6 +24,38 @@ const ordenarActividadReciente = (items) => [...items].sort((a, b) => {
 
   return fechaB - fechaA;
 });
+
+const crearFechaActividad = () => new Date().toLocaleString('es-AR', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+});
+
+const tieneNombreCliente = (cliente) => {
+  const firstname = cliente.name?.firstname?.trim();
+  const lastname = cliente.name?.lastname?.trim();
+
+  return Boolean(firstname && lastname);
+};
+
+const crearResumenClientes = (clientes) => ({
+  clientes: clientes.length,
+  contactos: clientes.filter((cliente) => cliente.email && cliente.phone).length,
+  fichas: clientes.filter((cliente) => cliente.username && cliente.password).length,
+});
+
+const crearActividadCarga = (cantidadClientes) => ({
+  id: Date.now(),
+  tipo: 'carga-clientes',
+  titulo: 'Lista de clientes cargada',
+  detalle: `Se consultaron ${cantidadClientes} clientes.`,
+  fecha: crearFechaActividad(),
+});
+
+const tieneDatosResumen = (resumen) => (
+  resumen.clientes > 0 ||
+  resumen.contactos > 0 ||
+  resumen.fichas > 0
+);
 
 const IconoActividad = ({ tipo }) => {
   if (tipo === 'registro-cliente') {
@@ -95,8 +128,8 @@ const MetricIcon = ({ tipo }) => {
 
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
-  const [metricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
-  const [actividad] = useState(() => {
+  const [metricas, setMetricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
+  const [actividad, setActividad] = useState(() => {
     const historial = leerStorage(ACTIVIDAD_KEY, []);
 
     if (historial.length > 0) {
@@ -116,6 +149,52 @@ const Dashboard = () => {
 
     return [];
   });
+  const [cargandoResumen, setCargandoResumen] = useState(false);
+
+  useEffect(() => {
+    if (tieneDatosResumen(metricas)) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const cargarResumenDesdeApi = async () => {
+      setCargandoResumen(true);
+
+      try {
+        const respuesta = await fetch(API_URL, {
+          signal: controller.signal,
+        });
+
+        if (!respuesta.ok) {
+          throw new Error('No se pudo cargar el resumen del dashboard.');
+        }
+
+        const data = await respuesta.json();
+        const clientesApi = data.filter(tieneNombreCliente);
+        const resumen = crearResumenClientes(clientesApi);
+        const actividadCarga = crearActividadCarga(clientesApi.length);
+        const actividadActualizada = [actividadCarga];
+
+        localStorage.setItem(RESUMEN_KEY, JSON.stringify(resumen));
+        localStorage.setItem(ACTIVIDAD_KEY, JSON.stringify(actividadActualizada));
+        setMetricas(resumen);
+        setActividad(actividadActualizada);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          setActividad([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setCargandoResumen(false);
+        }
+      }
+    };
+
+    cargarResumenDesdeApi();
+
+    return () => controller.abort();
+  }, [metricas]);
 
   const adminName = admin?.nombre || 'Administrador';
   const adminSector = admin?.sector || 'Sin sector asignado';
@@ -130,19 +209,19 @@ const Dashboard = () => {
     {
       key: 'clientes',
       label: 'Clientes',
-      valor: metricasSeguras.clientes,
+      valor: cargandoResumen ? '...' : metricasSeguras.clientes,
       icono: 'clientes',
     },
     {
       key: 'contactos',
       label: 'Contactos',
-      valor: metricasSeguras.contactos,
+      valor: cargandoResumen ? '...' : metricasSeguras.contactos,
       icono: 'contactos',
     },
     {
       key: 'fichas',
       label: 'Fichas completas',
-      valor: metricasSeguras.fichas,
+      valor: cargandoResumen ? '...' : metricasSeguras.fichas,
       icono: 'fichas',
     },
   ];
