@@ -165,13 +165,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
           </div>
 
 
-          {mensaje && 
-            <Alert className="registro-alert" variant={tipoMensaje}>
-              {mensaje}
-            </Alert>
-          }
-
-
           <Form noValidate onSubmit={handleSubmit}>
 
 
@@ -415,6 +408,12 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </Button>
+
+            {mensaje && 
+              <Alert className="registro-alert registro-alert-bottom" variant={tipoMensaje}>
+                {mensaje}
+              </Alert>
+            }
 
 
           </Form>

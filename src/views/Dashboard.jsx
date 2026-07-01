@@ -55,6 +55,44 @@ const IconoActividad = ({ tipo }) => {
   );
 };
 
+const MetricIcon = ({ tipo }) => {
+  if (tipo === 'clientes') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 21c0-3.5 2.8-6 7-6s7 2.5 7 6" />
+        <path d="M3 9.5c0-1.6 1.2-3 2.8-3s2.8 1.4 2.8 3" />
+      </svg>
+    );
+  }
+
+  if (tipo === 'contactos') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.72 11.72 0 003.68.58 1 1 0 011 1v3.5a1 1 0 01-1 1A17.91 17.91 0 013 6a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.58 3.68 1 1 0 01-.21 1.11l-2.2 2.2z" />
+      </svg>
+    );
+  }
+
+  if (tipo === 'fichas') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M7 3h8l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+        <path d="M15 3v5h5" />
+        <path d="M9 9h6" />
+        <path d="M9 13h3" />
+        <path d="M9 17l1.5 1.5 4-4" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+    </svg>
+  );
+};
+
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
   const [metricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
@@ -79,37 +117,69 @@ const Dashboard = () => {
     return [];
   });
 
+  const adminName = admin?.nombre || 'Administrador';
+  const adminSector = admin?.sector || 'Sin sector asignado';
+  const actividadReciente = actividad.slice(0, 5);
+
   const metricasSeguras = {
     ...RESUMEN_INICIAL,
     ...metricas,
   };
+
+  const metricasItems = [
+    {
+      key: 'clientes',
+      label: 'Clientes',
+      valor: metricasSeguras.clientes,
+      icono: 'clientes',
+    },
+    {
+      key: 'contactos',
+      label: 'Contactos',
+      valor: metricasSeguras.contactos,
+      icono: 'contactos',
+    },
+    {
+      key: 'fichas',
+      label: 'Fichas completas',
+      valor: metricasSeguras.fichas,
+      icono: 'fichas',
+    },
+  ];
 
   return (
     <main className="dashboard-page">
       <section className="dashboard-welcome">
         <div className="dashboard-welcome-copy">
           <h1>
-            <span aria-hidden="true">{'\uD83D\uDC4B'}</span>
-            Bienvenido, <span className="dashboard-user-name">{admin?.nombre}</span>
+            <span className="dashboard-welcome-emoji" aria-hidden="true">{'\uD83D\uDC4B'}</span>
+            Bienvenido, <span className="dashboard-user-name">{adminName}</span>
           </h1>
           <p className="dashboard-intro">
             Tenes acceso al sistema de gestion de clientes.
           </p>
-          <span className="dashboard-role-pill">Sector: {admin?.sector}</span>
+          <span className="dashboard-role-pill">Sector: {adminSector}</span>
         </div>
 
         <div className="dashboard-summary">
-          <div>
-            <span>Clientes</span>
-            <strong>{metricasSeguras.clientes}</strong>
+          <div className="dashboard-summary-header">
+            <h2>Estado actual</h2>
           </div>
-          <div>
-            <span>Contactos</span>
-            <strong>{metricasSeguras.contactos}</strong>
-          </div>
-          <div>
-            <span>Fichas completas</span>
-            <strong>{metricasSeguras.fichas}</strong>
+
+          <div className="dashboard-summary-grid">
+            {metricasItems.map((item) => (
+              <article key={item.key} className="dashboard-summary-card shadow-sm">
+                <div>
+                  <span className="dashboard-summary-icon" aria-hidden="true">
+                    <MetricIcon tipo={item.icono} />
+                  </span>
+                </div>
+                <div>
+                  <span>{item.label}</span>
+                  <strong>{item.valor}</strong>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -125,20 +195,27 @@ const Dashboard = () => {
             El registro se completara cuando se cargue la lista de clientes desde la API.
           </p>
         ) : (
-          <ul>
-            {actividad.map((item) => (
-              <li key={item.id}>
-                <span className="dashboard-activity-icon">
-                  <IconoActividad tipo={item.tipo} />
-                </span>
-                <div>
-                  <span>{item.fecha}</span>
-                  <strong>{item.titulo}</strong>
-                  <p>{item.detalle}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul>
+              {actividadReciente.map((item) => (
+                <li key={item.id}>
+                  <span className="dashboard-activity-icon">
+                    <IconoActividad tipo={item.tipo} />
+                  </span>
+                  <div>
+                    <span>{item.fecha}</span>
+                    <strong>{item.titulo}</strong>
+                    <p>{item.detalle}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {actividad.length > actividadReciente.length && (
+              <p className="dashboard-activity-note">
+                Mostrando los últimos {actividadReciente.length} movimientos de {actividad.length} totales.
+              </p>
+            )}
+          </>
         )}
       </section>
     </main>

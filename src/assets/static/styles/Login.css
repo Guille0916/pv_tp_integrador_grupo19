@@ -16,11 +16,11 @@
   right: -4%;
   bottom: 0;
   left: -4%;
-  height: 56%;
+  height: 62%;
   background:
-    linear-gradient(180deg, rgba(31, 50, 78, 0.86), rgba(13, 23, 38, 0.98)),
-    linear-gradient(135deg, transparent 0 20%, rgba(147, 197, 253, 0.2) 20% 21%, transparent 21% 100%);
-  clip-path: polygon(0 78%, 8% 57%, 15% 66%, 23% 34%, 32% 62%, 41% 25%, 51% 63%, 61% 39%, 70% 67%, 80% 31%, 91% 60%, 100% 43%, 100% 100%, 0 100%);
+    linear-gradient(180deg, rgba(64, 89, 126, 0.86), rgba(18, 34, 58, 0.98)),
+    linear-gradient(135deg, transparent 0 20%, rgba(191, 219, 254, 0.24) 20% 21%, transparent 21% 100%);
+  clip-path: polygon(0 72%, 7% 50%, 14% 61%, 22% 24%, 30% 58%, 39% 15%, 49% 60%, 58% 32%, 67% 63%, 77% 22%, 88% 56%, 100% 31%, 100% 100%, 0 100%);
   content: "";
   pointer-events: none;
 }
@@ -30,11 +30,11 @@
   right: -8%;
   bottom: -1px;
   left: -8%;
-  height: 38%;
+  height: 42%;
   background:
-    linear-gradient(180deg, rgba(9, 19, 33, 0.98), #050914),
-    linear-gradient(90deg, transparent 0 18%, rgba(147, 197, 253, 0.1) 18% 19%, transparent 19% 100%);
-  clip-path: polygon(0 64%, 10% 48%, 18% 55%, 28% 34%, 37% 51%, 49% 26%, 60% 50%, 70% 37%, 81% 58%, 91% 42%, 100% 60%, 100% 100%, 0 100%);
+    linear-gradient(180deg, rgba(11, 26, 45, 0.98), #030712),
+    repeating-linear-gradient(90deg, transparent 0 22px, rgba(30, 64, 105, 0.55) 22px 24px, transparent 24px 46px);
+  clip-path: polygon(0 68%, 3% 48%, 5% 64%, 8% 37%, 11% 62%, 15% 43%, 18% 66%, 22% 30%, 26% 61%, 30% 45%, 34% 68%, 38% 34%, 42% 62%, 46% 46%, 50% 70%, 54% 28%, 58% 61%, 62% 42%, 66% 67%, 70% 36%, 74% 60%, 78% 44%, 82% 68%, 86% 31%, 90% 62%, 94% 46%, 97% 65%, 100% 40%, 100% 100%, 0 100%);
   content: "";
   pointer-events: none;
 }

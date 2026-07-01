@@ -30,7 +30,7 @@ function App() {
       <BrowserRouter>
         <div className="app-layout">
           <Header />
-          <div className="app-main">
+          <div className="app-main app-page-background">
             <Routes>
               <Route path="/" element={<Inicio />} />
               <Route path="/login" element={<Login />} />
