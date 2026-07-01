@@ -163,7 +163,6 @@ const Dashboard = () => {
 
         <div className="dashboard-summary">
           <div className="dashboard-summary-header">
-            <p className="dashboard-kicker">Resumen general</p>
             <h2>Estado actual</h2>
           </div>
 
