@@ -199,9 +199,7 @@ const DetalleCliente = () => {
     address = {},
     email,
     name = {},
-    password,
     phone,
-    username,
   } = cliente;
 
   const nombreCompleto = `${name.firstname ?? ''} ${name.lastname ?? ''}`.trim() || 'Cliente';
@@ -300,20 +298,6 @@ const DetalleCliente = () => {
               <div>
                 <dt>Codigo postal</dt>
                 <dd>{address.zipcode}</dd>
-              </div>
-            </dl>
-          </article>
-
-          <article className="detalle-card">
-            <h2>Credenciales</h2>
-            <dl>
-              <div>
-                <dt>Usuario</dt>
-                <dd>{username}</dd>
-              </div>
-              <div>
-                <dt>Password</dt>
-                <dd>{password}</dd>
               </div>
             </dl>
           </article>
