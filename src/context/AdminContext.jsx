@@ -19,6 +19,13 @@ const reiniciarDatosLocalesSiHaceFalta = () => {
   localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
 };
 
+const limpiarDatosSesion = () => {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('adminSeccion');
+  localStorage.removeItem('admin');
+  STORAGE_DATOS_CLIENTES.forEach((key) => localStorage.removeItem(key));
+};
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const AdminContext = createContext();
 
@@ -54,6 +61,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const logout = () => {
+    limpiarDatosSesion();
     setAdmin(null);
   };
 
