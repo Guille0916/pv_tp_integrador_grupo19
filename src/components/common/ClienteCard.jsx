@@ -1,5 +1,4 @@
 import BotonIcono from './BotonIcono';
-import Badge from "react-bootstrap/Badge";
 
 const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = false }) => {
   const nombreCompleto = `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim();
@@ -7,40 +6,21 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
 
   return (
     <article className="cliente-card">
-
-      {/* HEADER */}
       <div className="cliente-card-top">
-<<<<<<< Updated upstream
-        <div>
-          <strong className="cliente-nombre">{nombreCompleto}</strong>
-          <div className="cliente-meta">
-            <span>Usuario: {cliente.username}</span>
-          </div>
-        </div>
-
-        <Badge bg="primary">#{cliente.id}</Badge>
-=======
         <span className="cliente-card-avatar" aria-hidden="true">
           {iniciales}
         </span>
         <strong>{nombreCompleto || 'Cliente'}</strong>
->>>>>>> Stashed changes
       </div>
 
-      {/* DATOS */}
       <dl className="cliente-card-datos">
-
         <div>
           <dt>Email</dt>
           <dd>{cliente.email || '-'}</dd>
         </div>
 
         <div>
-<<<<<<< Updated upstream
-          <dt>Teléfono</dt>
-=======
           <dt>Telefono</dt>
->>>>>>> Stashed changes
           <dd>{cliente.phone || '-'}</dd>
         </div>
 
@@ -50,36 +30,18 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
         </div>
 
         <div>
-          <dt>Dirección</dt>
+          <dt>Direccion</dt>
           <dd>
             {cliente.address?.street ?? '-'} {cliente.address?.number ?? ''}
           </dd>
         </div>
 
         <div>
-          <dt>Código Postal</dt>
+          <dt>Codigo Postal</dt>
           <dd>{cliente.address?.zipcode || '-'}</dd>
         </div>
-
       </dl>
 
-<<<<<<< Updated upstream
-      <hr />
-
-      {/* BOTÓN */}
-      <BotonIcono
-        className="cliente-card-link"
-        label="Ver ficha completa"
-        to={`/clientes/${cliente.id}`}
-      >
-        <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
-          <path d="M5 4h10l4 4v12H5z" />
-          <path d="M15 4v5h5" />
-          <path d="M8 13h8M8 16h6" />
-        </svg>
-      </BotonIcono>
-
-=======
       <footer className="cliente-card-footer">
         <BotonIcono
           className="cliente-card-link"
@@ -92,6 +54,7 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
             <path d="M8 13h8M8 16h6" />
           </svg>
         </BotonIcono>
+
         {puedeEliminar && (
           <BotonIcono
             className="cliente-card-delete"
@@ -108,7 +71,6 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
           </BotonIcono>
         )}
       </footer>
->>>>>>> Stashed changes
     </article>
   );
 };
