@@ -210,11 +210,6 @@ const DetalleCliente = () => {
       <section className="detalle-shell">
         <div className="detalle-topbar">
           <BotonVolverClientes />
-          <div className="detalle-top-actions">
-            <span className={`detalle-role ${admin?.sector === 'Gerencia' ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
-              {admin?.sector ?? 'Sin sector'}
-            </span>
-          </div>
         </div>
 
         <header className="detalle-header">
@@ -222,12 +217,9 @@ const DetalleCliente = () => {
             <div className="detalle-avatar" aria-hidden="true">{iniciales}</div>
             <div className="detalle-persona-main">
               <div>
-                <p className="detalle-kicker">Ficha completa</p>
                 <h1>{nombreCompleto}</h1>
                 <div className="detalle-meta">
                   <span>ID #{cliente.id}</span>
-                  <span>{email}</span>
-                  <span>{phone}</span>
                 </div>
               </div>
               {admin?.sector === 'Gerencia' && (
@@ -266,7 +258,7 @@ const DetalleCliente = () => {
         )}
 
         <div className="detalle-grid">
-          <article className="detalle-card">
+          <article className="detalle-card detalle-card-contacto">
             <h2>Datos de contacto</h2>
             <dl>
               <div>
@@ -280,7 +272,7 @@ const DetalleCliente = () => {
             </dl>
           </article>
 
-          <article className="detalle-card">
+          <article className="detalle-card detalle-card-address">
             <h2>Direccion completa</h2>
             <dl>
               <div>
