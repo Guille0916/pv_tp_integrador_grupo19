@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BotonVolverClientes from '../components/common/BotonVolverClientes';
+import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
@@ -48,7 +49,7 @@ const eliminarClienteApi = async (id) => {
   });
 
   if (!respuesta.ok) {
-    throw new Error('No se pudo simular la eliminacion del cliente.');
+    throw new Error('No se pudo eliminar el cliente.');
   }
 };
 
@@ -81,6 +82,7 @@ const DetalleCliente = () => {
   const [error, setError] = useState('');
   const [eliminando, setEliminando] = useState(false);
   const [mensajeDelete, setMensajeDelete] = useState('');
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -130,11 +132,6 @@ const DetalleCliente = () => {
     }
 
     const nombreCompleto = `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim();
-    const confirmar = window.confirm(`Seguro que queres eliminar a ${nombreCompleto}?`);
-
-    if (!confirmar) {
-      return;
-    }
 
     setEliminando(true);
     setMensajeDelete('');
@@ -158,6 +155,7 @@ const DetalleCliente = () => {
       });
 
       setMensajeDelete(`Cliente ${nombreCompleto} eliminado correctamente.`);
+      setMostrarConfirmacion(false);
       setTimeout(() => navigate('/clientes'), 1200);
     } catch (err) {
       setError(err.message || 'Ocurrio un error al eliminar el cliente.');
@@ -210,11 +208,6 @@ const DetalleCliente = () => {
       <section className="detalle-shell">
         <div className="detalle-topbar">
           <BotonVolverClientes />
-          <div className="detalle-top-actions">
-            <span className={`detalle-role ${admin?.sector === 'Gerencia' ? 'detalle-role-gerencia' : 'detalle-role-soporte'}`}>
-              {admin?.sector ?? 'Sin sector'}
-            </span>
-          </div>
         </div>
 
         <header className="detalle-header">
@@ -222,12 +215,9 @@ const DetalleCliente = () => {
             <div className="detalle-avatar" aria-hidden="true">{iniciales}</div>
             <div className="detalle-persona-main">
               <div>
-                <p className="detalle-kicker">Ficha completa</p>
                 <h1>{nombreCompleto}</h1>
                 <div className="detalle-meta">
                   <span>ID #{cliente.id}</span>
-                  <span>{email}</span>
-                  <span>{phone}</span>
                 </div>
               </div>
               {admin?.sector === 'Gerencia' && (
@@ -235,7 +225,7 @@ const DetalleCliente = () => {
                   aria-label="Eliminar Cliente de la Base de Datos"
                   className="detalle-delete detalle-delete-icon"
                   disabled={eliminando}
-                  onClick={handleEliminar}
+                  onClick={() => setMostrarConfirmacion(true)}
                   title="Eliminar Cliente de la Base de Datos"
                   type="button"
                 >
@@ -266,7 +256,7 @@ const DetalleCliente = () => {
         )}
 
         <div className="detalle-grid">
-          <article className="detalle-card">
+          <article className="detalle-card detalle-card-contacto">
             <h2>Datos de contacto</h2>
             <dl>
               <div>
@@ -280,7 +270,7 @@ const DetalleCliente = () => {
             </dl>
           </article>
 
-          <article className="detalle-card">
+          <article className="detalle-card detalle-card-address">
             <h2>Direccion completa</h2>
             <dl>
               <div>
@@ -303,6 +293,14 @@ const DetalleCliente = () => {
           </article>
         </div>
       </section>
+
+      <ConfirmacionEliminar
+        cliente={cliente}
+        eliminando={eliminando}
+        mostrar={mostrarConfirmacion}
+        onCancelar={() => setMostrarConfirmacion(false)}
+        onConfirmar={handleEliminar}
+      />
     </main>
   );
 };

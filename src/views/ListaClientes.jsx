@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Spinner from 'react-bootstrap/Spinner';
 import BotonRegistrarCliente from '../components/common/BotonRegistrarCliente';
 import ClienteCard from '../components/common/ClienteCard';
+import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
+import { AdminContext } from '../context/AdminContext.jsx';
 
+const API_URL = 'https://fakestoreapi.com/users';
 const ACTIVIDAD_KEY = 'registroActividadClientes';
 const RESUMEN_KEY = 'resumenClientesDashboard';
 const CLIENTES_LOCALES_KEY = 'clientesRegistradosLocalmente';
@@ -48,6 +51,28 @@ const guardarActividadDashboard = (actividad) => {
   localStorage.setItem(ACTIVIDAD_KEY, JSON.stringify([actividad, ...historial].slice(0, 5)));
 };
 
+const eliminarClienteApi = async (id) => {
+  const respuesta = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!respuesta.ok) {
+    throw new Error('No se pudo eliminar el cliente.');
+  }
+};
+
+const eliminarClienteLocal = (id) => {
+  const locales = leerStorage(CLIENTES_LOCALES_KEY, []);
+  const localesActualizados = locales.filter((clienteLocal) => String(clienteLocal.id) !== String(id));
+  localStorage.setItem(CLIENTES_LOCALES_KEY, JSON.stringify(localesActualizados));
+};
+
+const guardarClienteApiEliminado = (id) => {
+  const idsEliminados = leerStorage(CLIENTES_ELIMINADOS_KEY, []).map(String);
+  const idsActualizados = Array.from(new Set([...idsEliminados, String(id)]));
+  localStorage.setItem(CLIENTES_ELIMINADOS_KEY, JSON.stringify(idsActualizados));
+};
+
 const tieneNombreCliente = (cliente) => {
   const firstname = cliente.name?.firstname?.trim();
   const lastname = cliente.name?.lastname?.trim();
@@ -64,11 +89,18 @@ const coincideBusqueda = (cliente, busqueda) => {
   return apellido.includes(busqueda) || ciudad.includes(busqueda);
 };
 
+const obtenerNombreCliente = (cliente) => (
+  `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim() || 'cliente'
+);
+
 const ListaClientes = () => {
+  const { admin } = useContext(AdminContext);
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [buscar, setBuscar] = useState('');
+  const [eliminandoId, setEliminandoId] = useState(null);
+  const [clienteAEliminar, setClienteAEliminar] = useState(null);
 
   useEffect(() => {
     const cargarClientes = async () => {
@@ -76,7 +108,7 @@ const ListaClientes = () => {
       setError('');
 
       try {
-        const respuesta = await fetch('https://fakestoreapi.com/users');
+        const respuesta = await fetch(API_URL);
 
         if (!respuesta.ok) {
           throw new Error('No se pudo cargar la lista de clientes.');
@@ -111,6 +143,52 @@ const ListaClientes = () => {
 
     cargarClientes();
   }, []);
+
+  const handleSolicitarEliminacion = (cliente) => {
+    if (admin?.sector !== 'Gerencia') {
+      return;
+    }
+
+    setClienteAEliminar(cliente);
+  };
+
+  const handleEliminarCliente = async () => {
+    if (admin?.sector !== 'Gerencia' || !clienteAEliminar) {
+      return;
+    }
+
+    const cliente = clienteAEliminar;
+    const nombreCliente = obtenerNombreCliente(cliente);
+
+    setEliminandoId(cliente.id);
+    setError('');
+
+    try {
+      if (cliente.creadoLocalmente) {
+        eliminarClienteLocal(cliente.id);
+      } else {
+        await eliminarClienteApi(cliente.id);
+        guardarClienteApiEliminado(cliente.id);
+      }
+
+      const clientesActualizados = clientes.filter((clienteActual) => String(clienteActual.id) !== String(cliente.id));
+      setClientes(clientesActualizados);
+      guardarResumenDashboard(clientesActualizados);
+      guardarActividadDashboard({
+        id: Date.now(),
+        tipo: 'eliminacion-cliente',
+        titulo: 'Cliente eliminado',
+        detalle: `Se elimino ${nombreCliente}.`,
+        fecha: crearFechaActividad(),
+      });
+      setClienteAEliminar(null);
+    } catch (err) {
+      setError(err.message || 'Ocurrio un error al eliminar el cliente.');
+    } finally {
+      setEliminandoId(null);
+    }
+  };
+
   const busquedaNormalizada = normalizarTexto(buscar);
   const clientesFiltrados = clientes.filter((cliente) => coincideBusqueda(cliente, busquedaNormalizada));
 
@@ -121,22 +199,23 @@ const ListaClientes = () => {
           <h1>Lista de clientes</h1>
         </div>
 
-        <BotonRegistrarCliente />
+        <div className="clientes-header-actions">
+          <div className="clientes-search">
+            <svg className="clientes-search-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m21 21-4.35-4.35" />
+              <circle cx="11" cy="11" r="7" />
+            </svg>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por apellido o ciudad..."
+              value={buscar}
+              onChange={(e) => setBuscar(e.target.value)}
+            />
+          </div>
+          <BotonRegistrarCliente />
+        </div>
       </section>
-
-      <div className="clientes-search">
-        <svg className="clientes-search-icon" aria-hidden="true" viewBox="0 0 24 24">
-          <path d="m21 21-4.35-4.35" />
-          <circle cx="11" cy="11" r="7" />
-        </svg>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar por apellido o ciudad..."
-          value={buscar}
-          onChange={(e) => setBuscar(e.target.value)}
-        />
-      </div>
       <section className="clientes-listado">
         {cargando && (
           <div className="clientes-grid">
@@ -180,13 +259,28 @@ const ListaClientes = () => {
         {!cargando && !error && clientesFiltrados.length > 0 && (
           <div className="clientes-grid">
             {clientesFiltrados.map((cliente) => (
-              <ClienteCard key={cliente.id} cliente={cliente} />
+              <ClienteCard
+                key={cliente.id}
+                cliente={cliente}
+                eliminando={String(eliminandoId) === String(cliente.id)}
+                onEliminar={handleSolicitarEliminacion}
+                puedeEliminar={admin?.sector === 'Gerencia'}
+              />
             ))}
           </div>
         )}
       </section>
+
+      <ConfirmacionEliminar
+        cliente={clienteAEliminar}
+        eliminando={Boolean(eliminandoId)}
+        mostrar={Boolean(clienteAEliminar)}
+        onCancelar={() => setClienteAEliminar(null)}
+        onConfirmar={handleEliminarCliente}
+      />
     </main>
   );
 };
 
 export default ListaClientes;
+

@@ -1,5 +1,5 @@
-﻿import { useState } from "react";
-import { Form, Button, Container, Row, Col, Alert, Card } from "react-bootstrap";
+import { useState } from "react";
+import { Form, Button, Row, Col, Alert, Card } from "react-bootstrap";
 
 const estadoInicial = {
   firstname: "",
@@ -142,266 +142,200 @@ const FormAltaCliente = ({ onClienteCreado }) => {
     } finally {
       setEnviando(false);
     }
-
   };
 
-
   return (
-
-    <Container className="registro-form-container mt-4">
-
-
-      <Card className="registro-form-card">
-
-        <Card.Body>
-
-          <div className="registro-form-heading">
-            <div>
-              <Card.Title>
-                Registrar cliente
-              </Card.Title>
-            </div>
-            <span className="registro-form-badge">Nuevo</span>
+    <Card className="registro-form-card">
+      <Card.Body>
+        <div className="registro-form-heading">
+          <span className="registro-form-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" />
+              <path d="M4 21a8 8 0 0 1 16 0" />
+              <path d="M19 8v6M16 11h6" />
+            </svg>
+          </span>
+          <div>
+            <Card.Title>Registrar cliente</Card.Title>
           </div>
+        </div>
 
-
-          <Form noValidate onSubmit={handleSubmit}>
-
-
+        <Form noValidate onSubmit={handleSubmit}>
+          <div className="registro-form-section">
+            <div className="registro-section-head">
+              <span>Datos personales</span>
+            </div>
             <Row>
-
-
-              <Col md={6}>
+              <Col md={6} lg={3}>
                 <Form.Group className="mb-3">
-
-                  <Form.Label>
-                    Nombre
-                  </Form.Label>
-
+                  <Form.Label>Nombre</Form.Label>
                   <Form.Control
                     isInvalid={Boolean(errores.firstname)}
                     name="firstname"
                     onChange={handleChange}
-                    placeholder="Ej: Nombre"
+                    placeholder="Nombre del cliente"
                     required
                     value={formData.firstname}
                   />
                   <Form.Control.Feedback type="invalid">{errores.firstname}</Form.Control.Feedback>
-
                 </Form.Group>
               </Col>
 
-
-
-              <Col md={6}>
+              <Col md={6} lg={3}>
                 <Form.Group className="mb-3">
-
-                  <Form.Label>
-                    Apellido
-                  </Form.Label>
-
+                  <Form.Label>Apellido</Form.Label>
                   <Form.Control
                     isInvalid={Boolean(errores.lastname)}
                     name="lastname"
                     onChange={handleChange}
-                    placeholder="Ej: Apellido"
+                    placeholder="Apellido del cliente"
                     required
                     value={formData.lastname}
                   />
                   <Form.Control.Feedback type="invalid">{errores.lastname}</Form.Control.Feedback>
-
                 </Form.Group>
               </Col>
 
-
-            </Row>
-
-
-
-
-            <Row>
-
-              <Col md={6}>
-
+              <Col md={6} lg={3}>
                 <Form.Group className="mb-3">
-
-                  <Form.Label>
-                    Email
-                  </Form.Label>
-
+                  <Form.Label>Email</Form.Label>
                   <Form.Control
                     isInvalid={Boolean(errores.email)}
                     name="email"
                     onChange={handleChange}
-                    placeholder="cliente@correo.com"
+                    placeholder="correo@ejemplo.com"
                     required
                     type="email"
                     value={formData.email}
                   />
                   <Form.Control.Feedback type="invalid">{errores.email}</Form.Control.Feedback>
-
                 </Form.Group>
-
               </Col>
 
-
-
-              <Col md={6}>
-
+              <Col md={6} lg={3}>
                 <Form.Group className="mb-3">
+                  <Form.Label>Telefono</Form.Label>
+                  <Form.Control
+                    isInvalid={Boolean(errores.phone)}
+                    name="phone"
+                    onChange={handleChange}
+                    placeholder="Telefono de contacto"
+                    required
+                    value={formData.phone}
+                  />
+                  <Form.Control.Feedback type="invalid">{errores.phone}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
+          </div>
 
-                  <Form.Label>
-                    Usuario
-                  </Form.Label>
-
+          <div className="registro-form-section">
+            <div className="registro-section-head">
+              <span>Cuenta y ubicacion</span>
+            </div>
+            <Row>
+              <Col md={6} lg={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Usuario</Form.Label>
                   <Form.Control
                     isInvalid={Boolean(errores.username)}
                     name="username"
                     onChange={handleChange}
-                    placeholder="usuario.cliente"
+                    placeholder="Nombre de usuario"
                     required
                     value={formData.username}
                   />
                   <Form.Control.Feedback type="invalid">{errores.username}</Form.Control.Feedback>
-
                 </Form.Group>
-
               </Col>
 
-            </Row>
-
-
-
-            <Form.Group className="mb-3">
-
-              <Form.Label>
-                Contrasena
-              </Form.Label>
-
-              <Form.Control
-                isInvalid={Boolean(errores.password)}
-                name="password"
-                onChange={handleChange}
-                placeholder="Minimo 4 caracteres"
-                required
-                type="password"
-                value={formData.password}
-              />
-              <Form.Control.Feedback type="invalid">{errores.password}</Form.Control.Feedback>
-
-            </Form.Group>
-
-
-
-
-            <Row>
-
-                <Col md={6}>
-  <Form.Group className="mb-3">
-    <Form.Label>Ciudad</Form.Label>
-    <Form.Select
-      isInvalid={Boolean(errores.city)}
-      name="city"
-      onChange={handleChange}
-      required
-      value={formData.city}
-    >
-      <option value="" disabled>Selecciona tu ciudad...</option>
-      <option value="San Salvador de Jujuy">San Salvador de Jujuy</option>
-      <option value="Palpala">Palpala</option>
-      <option value="El Carmen">El Carmen</option>
-      <option value="San Pedro de Jujuy">San Pedro de Jujuy</option>
-      <option value="Libertador General San Martin">Libertador General San Martin</option>
-      <option value="La Quiaca">La Quiaca</option>
-    </Form.Select>
-    <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
-  </Form.Group>
-</Col>
-
-              
-
-
-              <Col md={6}>
-
+              <Col md={6} lg={4}>
                 <Form.Group className="mb-3">
+                  <Form.Label>Contrasena</Form.Label>
+                  <Form.Control
+                    isInvalid={Boolean(errores.password)}
+                    name="password"
+                    onChange={handleChange}
+                    placeholder="Clave de acceso"
+                    required
+                    type="password"
+                    value={formData.password}
+                  />
+                  <Form.Control.Feedback type="invalid">{errores.password}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
 
-                  <Form.Label>
-                    Calle
-                  </Form.Label>
+              <Col md={6} lg={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Ciudad</Form.Label>
+                  <Form.Select
+                    isInvalid={Boolean(errores.city)}
+                    name="city"
+                    onChange={handleChange}
+                    required
+                    value={formData.city}
+                  >
+                    <option value="" disabled>Ciudad</option>
+                    <option value="San Salvador de Jujuy">San Salvador de Jujuy</option>
+                    <option value="Palpala">Palpala</option>
+                    <option value="El Carmen">El Carmen</option>
+                    <option value="San Pedro de Jujuy">San Pedro de Jujuy</option>
+                    <option value="Libertador General San Martin">Libertador General San Martin</option>
+                    <option value="La Quiaca">La Quiaca</option>
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
 
+              <Col md={6} lg={4}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Calle</Form.Label>
                   <Form.Control
                     isInvalid={Boolean(errores.street)}
                     name="street"
                     onChange={handleChange}
-                    placeholder="Ej: Belgrano"
+                    placeholder="Calle"
                     required
                     value={formData.street}
                   />
                   <Form.Control.Feedback type="invalid">{errores.street}</Form.Control.Feedback>
-
                 </Form.Group>
-
               </Col>
 
+              <Col md={6} lg={2}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Numero</Form.Label>
+                  <Form.Control
+                    isInvalid={Boolean(errores.number)}
+                    name="number"
+                    onChange={handleChange}
+                    placeholder="Altura"
+                    required
+                    type="number"
+                    value={formData.number}
+                  />
+                  <Form.Control.Feedback type="invalid">{errores.number}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
 
+              <Col md={6} lg={2}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Codigo postal</Form.Label>
+                  <Form.Control
+                    isInvalid={Boolean(errores.zipcode)}
+                    name="zipcode"
+                    onChange={handleChange}
+                    placeholder="Codigo postal"
+                    required
+                    value={formData.zipcode}
+                  />
+                  <Form.Control.Feedback type="invalid">{errores.zipcode}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
             </Row>
+          </div>
 
-
-
-
-            <Row>
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.number)}
-                  name="number"
-                  onChange={handleChange}
-                  placeholder="Numero"
-                  required
-                  type="number"
-                  value={formData.number}
-                />
-                <Form.Control.Feedback type="invalid">{errores.number}</Form.Control.Feedback>
-
-              </Col>
-
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.zipcode)}
-                  name="zipcode"
-                  onChange={handleChange}
-                  placeholder="Codigo postal"
-                  required
-                  value={formData.zipcode}
-                />
-                <Form.Control.Feedback type="invalid">{errores.zipcode}</Form.Control.Feedback>
-
-              </Col>
-
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.phone)}
-                  name="phone"
-                  onChange={handleChange}
-                  placeholder="Telefono"
-                  required
-                  value={formData.phone}
-                />
-                <Form.Control.Feedback type="invalid">{errores.phone}</Form.Control.Feedback>
-
-              </Col>
-
-
-            </Row>
-
+          <div className="registro-form-actions">
             <Button className="registro-submit" disabled={enviando} variant="primary" type="submit">
               <span>{enviando ? "Guardando..." : "Agregar Cliente"}</span>
               <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -409,27 +343,16 @@ const FormAltaCliente = ({ onClienteCreado }) => {
               </svg>
             </Button>
 
-            {mensaje && 
+            {mensaje && (
               <Alert className="registro-alert registro-alert-bottom" variant={tipoMensaje}>
                 {mensaje}
               </Alert>
-            }
-
-
-          </Form>
-
-
-        </Card.Body>
-
-      </Card>
-
-
-    </Container>
-
+            )}
+          </div>
+        </Form>
+      </Card.Body>
+    </Card>
   );
-
 };
 
-
 export default FormAltaCliente;
-
