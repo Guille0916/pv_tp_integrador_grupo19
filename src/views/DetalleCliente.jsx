@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { useNavigate, useParams, Link } from 'react-router-dom'; // Agregamos Link acá
 import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
+=======
+import { useNavigate, useParams } from 'react-router-dom';
+import BotonVolverClientes from '../components/common/BotonVolverClientes';
+>>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';

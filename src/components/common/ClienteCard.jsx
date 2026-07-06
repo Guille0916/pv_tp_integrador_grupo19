@@ -31,7 +31,6 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
       </dl>
 
       <footer className="cliente-card-footer">
-        {/* Cambiado a Link común */}
         <Link
           className="cliente-card-link"
           aria-label="Ver ficha completa"
@@ -44,7 +43,6 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
           </svg>
         </Link>
 
-        {/* Cambiado a button común */}
         {puedeEliminar && (
           <button
             type="button"
