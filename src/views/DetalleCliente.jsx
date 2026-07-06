@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
+<<<<<<< HEAD
+import { useNavigate, useParams, Link } from 'react-router-dom'; // Agregamos Link acá
+import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
+=======
 import { useNavigate, useParams } from 'react-router-dom';
 import BotonVolverClientes from '../components/common/BotonVolverClientes';
+>>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
@@ -48,7 +53,7 @@ const eliminarClienteApi = async (id) => {
   });
 
   if (!respuesta.ok) {
-    throw new Error('No se pudo simular la eliminacion del cliente.');
+    throw new Error('No se pudo eliminar el cliente.');
   }
 };
 
@@ -81,6 +86,7 @@ const DetalleCliente = () => {
   const [error, setError] = useState('');
   const [eliminando, setEliminando] = useState(false);
   const [mensajeDelete, setMensajeDelete] = useState('');
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -130,11 +136,6 @@ const DetalleCliente = () => {
     }
 
     const nombreCompleto = `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim();
-    const confirmar = window.confirm(`Seguro que queres eliminar a ${nombreCompleto}?`);
-
-    if (!confirmar) {
-      return;
-    }
 
     setEliminando(true);
     setMensajeDelete('');
@@ -158,6 +159,7 @@ const DetalleCliente = () => {
       });
 
       setMensajeDelete(`Cliente ${nombreCompleto} eliminado correctamente.`);
+      setMostrarConfirmacion(false);
       setTimeout(() => navigate('/clientes'), 1200);
     } catch (err) {
       setError(err.message || 'Ocurrio un error al eliminar el cliente.');
@@ -184,7 +186,10 @@ const DetalleCliente = () => {
     return (
       <main className="detalle-page">
         <div className="detalle-shell">
-          <BotonVolverClientes />
+          {/* Reemplazado por Link */}
+          <Link to="/clientes" className="clientes-alta-btn" style={{ textDecoration: 'none', display: 'inline-block', marginBottom: '1rem' }}>
+            &larr; Volver a clientes
+          </Link>
           <div className="detalle-alert detalle-alert-error">{error}</div>
         </div>
       </main>
@@ -209,7 +214,10 @@ const DetalleCliente = () => {
     <main className="detalle-page">
       <section className="detalle-shell">
         <div className="detalle-topbar">
-          <BotonVolverClientes />
+          {/* Reemplazado por Link */}
+          <Link to="/clientes" className="clientes-alta-btn" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            &larr; Volver a clientes
+          </Link>
         </div>
 
         <header className="detalle-header">
@@ -227,7 +235,7 @@ const DetalleCliente = () => {
                   aria-label="Eliminar Cliente de la Base de Datos"
                   className="detalle-delete detalle-delete-icon"
                   disabled={eliminando}
-                  onClick={handleEliminar}
+                  onClick={() => setMostrarConfirmacion(true)}
                   title="Eliminar Cliente de la Base de Datos"
                   type="button"
                 >
@@ -295,6 +303,14 @@ const DetalleCliente = () => {
           </article>
         </div>
       </section>
+
+      <ConfirmacionEliminar
+        cliente={cliente}
+        eliminando={eliminando}
+        mostrar={mostrarConfirmacion}
+        onCancelar={() => setMostrarConfirmacion(false)}
+        onConfirmar={handleEliminar}
+      />
     </main>
   );
 };

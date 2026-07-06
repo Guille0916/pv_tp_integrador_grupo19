@@ -126,6 +126,26 @@ const MetricIcon = ({ tipo }) => {
   );
 };
 
+const SectorIcon = ({ sector }) => {
+  if (sector === 'Gerencia') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M12 3l7 4v5c0 4.4-2.9 7.5-7 9-4.1-1.5-7-4.6-7-9V7z" />
+        <path d="M9 12l2 2 4-5" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M4 14a8 8 0 0 1 16 0" />
+      <path d="M18 14v3a3 3 0 0 1-3 3h-2" />
+      <path d="M4 14v3a2 2 0 0 0 2 2h1v-5H6a2 2 0 0 0-2 2" />
+      <path d="M20 14v3a2 2 0 0 1-2 2h-1v-5h1a2 2 0 0 1 2 2" />
+    </svg>
+  );
+};
+
 const Dashboard = () => {
   const { admin } = useContext(AdminContext);
   const [metricas, setMetricas] = useState(() => leerStorage(RESUMEN_KEY, RESUMEN_INICIAL));
@@ -231,13 +251,21 @@ const Dashboard = () => {
       <section className="dashboard-welcome">
         <div className="dashboard-welcome-copy">
           <h1>
-            <span className="dashboard-welcome-emoji" aria-hidden="true">{'\uD83D\uDC4B'}</span>
-            Bienvenido, <span className="dashboard-user-name">{adminName}</span>
+            <span className="dashboard-welcome-emoji" aria-hidden="true">
+              👋
+            </span>
+            Hola, <span className="dashboard-user-name">{adminName}</span>
           </h1>
-          <p className="dashboard-intro">
-            Tenes acceso al sistema de gestion de clientes.
-          </p>
-          <span className="dashboard-role-pill">Sector: {adminSector}</span>
+          <p className="dashboard-welcome-note">Gestion de clientes lista para trabajar.</p>
+          <div className="dashboard-role-box">
+            <span>Sector asignado</span>
+            <strong className="dashboard-role-value">
+              <span className="dashboard-role-icon" aria-hidden="true">
+                <SectorIcon sector={adminSector} />
+              </span>
+              {adminSector}
+            </strong>
+          </div>
         </div>
 
         <div className="dashboard-summary">

@@ -5,6 +5,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Spinner from 'react-bootstrap/Spinner';
 import BotonRegistrarCliente from '../components/common/BotonRegistrarCliente';
 import ClienteCard from '../components/common/ClienteCard';
+import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
@@ -56,7 +57,7 @@ const eliminarClienteApi = async (id) => {
   });
 
   if (!respuesta.ok) {
-    throw new Error('No se pudo simular la eliminacion del cliente.');
+    throw new Error('No se pudo eliminar el cliente.');
   }
 };
 
@@ -99,6 +100,7 @@ const ListaClientes = () => {
   const [error, setError] = useState('');
   const [buscar, setBuscar] = useState('');
   const [eliminandoId, setEliminandoId] = useState(null);
+  const [clienteAEliminar, setClienteAEliminar] = useState(null);
 
   useEffect(() => {
     const cargarClientes = async () => {
@@ -142,17 +144,21 @@ const ListaClientes = () => {
     cargarClientes();
   }, []);
 
-  const handleEliminarCliente = async (cliente) => {
+  const handleSolicitarEliminacion = (cliente) => {
     if (admin?.sector !== 'Gerencia') {
       return;
     }
 
-    const nombreCliente = obtenerNombreCliente(cliente);
-    const confirmar = window.confirm(`Seguro que queres eliminar a ${nombreCliente}?`);
+    setClienteAEliminar(cliente);
+  };
 
-    if (!confirmar) {
+  const handleEliminarCliente = async () => {
+    if (admin?.sector !== 'Gerencia' || !clienteAEliminar) {
       return;
     }
+
+    const cliente = clienteAEliminar;
+    const nombreCliente = obtenerNombreCliente(cliente);
 
     setEliminandoId(cliente.id);
     setError('');
@@ -175,6 +181,7 @@ const ListaClientes = () => {
         detalle: `Se elimino ${nombreCliente}.`,
         fecha: crearFechaActividad(),
       });
+      setClienteAEliminar(null);
     } catch (err) {
       setError(err.message || 'Ocurrio un error al eliminar el cliente.');
     } finally {
@@ -256,15 +263,24 @@ const ListaClientes = () => {
                 key={cliente.id}
                 cliente={cliente}
                 eliminando={String(eliminandoId) === String(cliente.id)}
-                onEliminar={handleEliminarCliente}
+                onEliminar={handleSolicitarEliminacion}
                 puedeEliminar={admin?.sector === 'Gerencia'}
               />
             ))}
           </div>
         )}
       </section>
+
+      <ConfirmacionEliminar
+        cliente={clienteAEliminar}
+        eliminando={Boolean(eliminandoId)}
+        mostrar={Boolean(clienteAEliminar)}
+        onCancelar={() => setClienteAEliminar(null)}
+        onConfirmar={handleEliminarCliente}
+      />
     </main>
   );
 };
 
 export default ListaClientes;
+

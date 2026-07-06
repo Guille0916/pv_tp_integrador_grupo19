@@ -11,6 +11,7 @@ const Footer = () => {
       <div className="app-footer-inner">
         <div className="app-footer-copy">
           <p>&copy; Grupo 19 - Facultad de Ingenieria - UNJu. Todos los derechos reservados.</p>
+          <small>Proyecto integrador de Programacion Visual</small>
         </div>
 
         <div className="app-footer-social" aria-label="Redes sociales">

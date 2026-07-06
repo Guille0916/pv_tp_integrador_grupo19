@@ -1,4 +1,4 @@
-import BotonIcono from './BotonIcono';
+import { Link } from 'react-router-dom';
 
 const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = false }) => {
   const nombreCompleto = `${cliente.name?.firstname ?? ''} ${cliente.name?.lastname ?? ''}`.trim();
@@ -28,24 +28,12 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
           <dt>Ciudad</dt>
           <dd>{cliente.address?.city || '-'}</dd>
         </div>
-
-        <div>
-          <dt>Direccion</dt>
-          <dd>
-            {cliente.address?.street ?? '-'} {cliente.address?.number ?? ''}
-          </dd>
-        </div>
-
-        <div>
-          <dt>Codigo Postal</dt>
-          <dd>{cliente.address?.zipcode || '-'}</dd>
-        </div>
       </dl>
 
       <footer className="cliente-card-footer">
-        <BotonIcono
+        <Link
           className="cliente-card-link"
-          label="Ver ficha completa"
+          aria-label="Ver ficha completa"
           to={`/clientes/${cliente.id}`}
         >
           <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -53,13 +41,14 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
             <path d="M15 4v5h5" />
             <path d="M8 13h8M8 16h6" />
           </svg>
-        </BotonIcono>
+        </Link>
 
         {puedeEliminar && (
-          <BotonIcono
+          <button
+            type="button"
             className="cliente-card-delete"
             disabled={eliminando}
-            label="Eliminar cliente"
+            aria-label="Eliminar cliente"
             onClick={() => onEliminar?.(cliente)}
           >
             <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -68,7 +57,7 @@ const ClienteCard = ({ cliente, eliminando = false, onEliminar, puedeEliminar = 
               <path d="M6 7l1 13h10l1-13" />
               <path d="M9 7V4h6v3" />
             </svg>
-          </BotonIcono>
+          </button>
         )}
       </footer>
     </article>
