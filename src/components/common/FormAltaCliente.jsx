@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { Form, Button, Row, Col, Alert, Card } from "react-bootstrap";
-=======
-﻿import { useState } from "react";
-import { Form, Button, Container, Row, Col, Alert, Card } from "react-bootstrap";
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
 
 const estadoInicial = {
   firstname: "",
@@ -147,9 +142,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
     } finally {
       setEnviando(false);
     }
-
   };
-
 
   return (
     <Card className="registro-form-card">
@@ -167,34 +160,11 @@ const FormAltaCliente = ({ onClienteCreado }) => {
           </div>
         </div>
 
-<<<<<<< HEAD
         <Form noValidate onSubmit={handleSubmit}>
           <div className="registro-form-section">
             <div className="registro-section-head">
               <span>Datos personales</span>
             </div>
-=======
-    <Container className="registro-form-container mt-4">
-
-
-      <Card className="registro-form-card">
-
-        <Card.Body>
-
-          <div className="registro-form-heading">
-            <div>
-              <Card.Title>
-                Registrar cliente
-              </Card.Title>
-            </div>
-            <span className="registro-form-badge">Nuevo</span>
-          </div>
-
-
-          <Form noValidate onSubmit={handleSubmit}>
-
-
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
             <Row>
               <Col md={6} lg={3}>
                 <Form.Group className="mb-3">
@@ -203,11 +173,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.firstname)}
                     name="firstname"
                     onChange={handleChange}
-<<<<<<< HEAD
                     placeholder="Nombre del cliente"
-=======
-                    placeholder="Ej: Nombre"
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                     required
                     value={formData.firstname}
                   />
@@ -222,11 +188,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.lastname)}
                     name="lastname"
                     onChange={handleChange}
-<<<<<<< HEAD
                     placeholder="Apellido del cliente"
-=======
-                    placeholder="Ej: Apellido"
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                     required
                     value={formData.lastname}
                   />
@@ -241,11 +203,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.email)}
                     name="email"
                     onChange={handleChange}
-<<<<<<< HEAD
                     placeholder="correo@ejemplo.com"
-=======
-                    placeholder="cliente@correo.com"
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                     required
                     type="email"
                     value={formData.email}
@@ -283,11 +241,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.username)}
                     name="username"
                     onChange={handleChange}
-<<<<<<< HEAD
                     placeholder="Nombre de usuario"
-=======
-                    placeholder="usuario.cliente"
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                     required
                     value={formData.username}
                   />
@@ -295,65 +249,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                 </Form.Group>
               </Col>
 
-<<<<<<< HEAD
               <Col md={6} lg={4}>
-=======
-            </Row>
-
-
-
-            <Form.Group className="mb-3">
-
-              <Form.Label>
-                Contrasena
-              </Form.Label>
-
-              <Form.Control
-                isInvalid={Boolean(errores.password)}
-                name="password"
-                onChange={handleChange}
-                placeholder="Minimo 4 caracteres"
-                required
-                type="password"
-                value={formData.password}
-              />
-              <Form.Control.Feedback type="invalid">{errores.password}</Form.Control.Feedback>
-
-            </Form.Group>
-
-
-
-
-            <Row>
-
-                <Col md={6}>
-  <Form.Group className="mb-3">
-    <Form.Label>Ciudad</Form.Label>
-    <Form.Select
-      isInvalid={Boolean(errores.city)}
-      name="city"
-      onChange={handleChange}
-      required
-      value={formData.city}
-    >
-      <option value="" disabled>Selecciona tu ciudad...</option>
-      <option value="San Salvador de Jujuy">San Salvador de Jujuy</option>
-      <option value="Palpala">Palpala</option>
-      <option value="El Carmen">El Carmen</option>
-      <option value="San Pedro de Jujuy">San Pedro de Jujuy</option>
-      <option value="Libertador General San Martin">Libertador General San Martin</option>
-      <option value="La Quiaca">La Quiaca</option>
-    </Form.Select>
-    <Form.Control.Feedback type="invalid">{errores.city}</Form.Control.Feedback>
-  </Form.Group>
-</Col>
-
-              
-
-
-              <Col md={6}>
-
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                 <Form.Group className="mb-3">
                   <Form.Label>Contrasena</Form.Label>
                   <Form.Control
@@ -398,11 +294,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
                     isInvalid={Boolean(errores.street)}
                     name="street"
                     onChange={handleChange}
-<<<<<<< HEAD
                     placeholder="Calle"
-=======
-                    placeholder="Ej: Belgrano"
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
                     required
                     value={formData.street}
                   />
@@ -443,66 +335,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
             </Row>
           </div>
 
-<<<<<<< HEAD
           <div className="registro-form-actions">
-=======
-
-
-
-            <Row>
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.number)}
-                  name="number"
-                  onChange={handleChange}
-                  placeholder="Numero"
-                  required
-                  type="number"
-                  value={formData.number}
-                />
-                <Form.Control.Feedback type="invalid">{errores.number}</Form.Control.Feedback>
-
-              </Col>
-
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.zipcode)}
-                  name="zipcode"
-                  onChange={handleChange}
-                  placeholder="Codigo postal"
-                  required
-                  value={formData.zipcode}
-                />
-                <Form.Control.Feedback type="invalid">{errores.zipcode}</Form.Control.Feedback>
-
-              </Col>
-
-
-              <Col md={4}>
-
-                <Form.Control
-                  className="mb-3"
-                  isInvalid={Boolean(errores.phone)}
-                  name="phone"
-                  onChange={handleChange}
-                  placeholder="Telefono"
-                  required
-                  value={formData.phone}
-                />
-                <Form.Control.Feedback type="invalid">{errores.phone}</Form.Control.Feedback>
-
-              </Col>
-
-
-            </Row>
-
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
             <Button className="registro-submit" disabled={enviando} variant="primary" type="submit">
               <span>{enviando ? "Guardando..." : "Agregar Cliente"}</span>
               <svg className="btn-icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -510,7 +343,6 @@ const FormAltaCliente = ({ onClienteCreado }) => {
               </svg>
             </Button>
 
-<<<<<<< HEAD
             {mensaje && (
               <Alert className="registro-alert registro-alert-bottom" variant={tipoMensaje}>
                 {mensaje}
@@ -520,29 +352,7 @@ const FormAltaCliente = ({ onClienteCreado }) => {
         </Form>
       </Card.Body>
     </Card>
-=======
-            {mensaje && 
-              <Alert className="registro-alert registro-alert-bottom" variant={tipoMensaje}>
-                {mensaje}
-              </Alert>
-            }
-
-
-          </Form>
-
-
-        </Card.Body>
-
-      </Card>
-
-
-    </Container>
-
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
   );
-
 };
 
-
 export default FormAltaCliente;
-

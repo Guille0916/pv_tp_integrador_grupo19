@@ -1,11 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
-<<<<<<< HEAD
-import { useNavigate, useParams, Link } from 'react-router-dom'; // Agregamos Link acá
-import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
-=======
 import { useNavigate, useParams } from 'react-router-dom';
 import BotonVolverClientes from '../components/common/BotonVolverClientes';
->>>>>>> 75c9f0dcd5cce79ef23b6e4e72b770fafdd3c41b
+import ConfirmacionEliminar from '../components/common/ConfirmacionEliminar';
 import { AdminContext } from '../context/AdminContext.jsx';
 
 const API_URL = 'https://fakestoreapi.com/users';
@@ -186,10 +182,7 @@ const DetalleCliente = () => {
     return (
       <main className="detalle-page">
         <div className="detalle-shell">
-          {/* Reemplazado por Link */}
-          <Link to="/clientes" className="clientes-alta-btn" style={{ textDecoration: 'none', display: 'inline-block', marginBottom: '1rem' }}>
-            &larr; Volver a clientes
-          </Link>
+          <BotonVolverClientes />
           <div className="detalle-alert detalle-alert-error">{error}</div>
         </div>
       </main>
@@ -214,10 +207,7 @@ const DetalleCliente = () => {
     <main className="detalle-page">
       <section className="detalle-shell">
         <div className="detalle-topbar">
-          {/* Reemplazado por Link */}
-          <Link to="/clientes" className="clientes-alta-btn" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            &larr; Volver a clientes
-          </Link>
+          <BotonVolverClientes />
         </div>
 
         <header className="detalle-header">
